@@ -1,0 +1,29 @@
+General Game State:
+	* Game Phase
+	* Current Project
+	* Available Money
+	* Deck Progress
+	* Cards in Deck
+		* Number of Uses (left/total)
+		* Card Type
+		* Modifiers
+		* Cost
+
+Phase 1:
+	* Chosen Store
+	* Encounters
+		* Requirements
+		* Rewards
+	* Used Cards
+	* Available cards to buy
+
+Phase 2:
+	* Deck part requirements
+	* Chosen cards
+	* Time left
+	* Laborers played with/out held materials
+	* Cards in hand
+	* Cards discarded
+	* Cards left in deck
+	* Used cards
+

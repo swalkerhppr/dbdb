@@ -1,0 +1,164 @@
+<AssetDefinitions>
+	<!-- Backgrounds -->
+	<ImageFile filename="mainmenu.png" />
+	<ImageFile filename="store_choice.png" />
+	<ImageFile filename="deckbuilding.png" />
+
+	<!-- User Interface -->
+	<ImageFile filename="mainmenu.png" />
+	<ImageFile filename="main_button.png">
+		<Metadata name="MainButton" height="32" width="128">
+			<Frames col-num="1" row-range="1-3"/>
+		</Metadata>
+	</ImageFile>
+
+	<!-- Sprites -->
+	<ImageFile filename="npc_figure_sheet.png">
+		<Metadata name="colo-fig-idle" height="48" width="48" top="0">
+			<Frames col-range="1-4" row-num="1"/>
+			<Frames col-range="4-2" row-num="1"/>
+			<Frames col-range="2-3" row-num="1"/>
+			<Frames col-range="4-1" row-num="1"/>
+		</Metadata>
+		<Metadata name="hood-fig-idle" height="48" width="48" top="48">
+			<Frames col-range="1-4" row-num="1"/>
+			<Frames col-range="4-2" row-num="1"/>
+			<Frames col-range="2-3" row-num="1"/>
+			<Frames col-range="4-1" row-num="1"/>
+		</Metadata>
+		<Metadata name="curt-fig-idle" height="48" width="48" top="96">
+			<Frames col-range="1-4" row-num="1"/>
+			<Frames col-range="4-2" row-num="1"/>
+			<Frames col-range="2-3" row-num="1"/>
+			<Frames col-range="4-1" row-num="1"/>
+		</Metadata>
+		<Metadata name="guru-fig-idle" height="48" width="48" top="144">
+			<Frames col-range="1-4" row-num="1"/>
+			<Frames col-range="4-2" row-num="1"/>
+			<Frames col-range="2-3" row-num="1"/>
+			<Frames col-range="4-1" row-num="1"/>
+		</Metadata>
+		<Metadata name="oarm-fig-idle" height="48" width="48" top="192">
+			<Frames col-range="1-4" row-num="1"/>
+			<Frames col-range="4-2" row-num="1"/>
+			<Frames col-range="2-3" row-num="1"/>
+			<Frames col-range="4-1" row-num="1"/>
+		</Metadata>
+		<Metadata name="sass-fig-idle" height="48" width="48" top="240">
+			<Frames col-range="1-4" row-num="1"/>
+			<Frames col-range="4-2" row-num="1"/>
+			<Frames col-range="2-3" row-num="1"/>
+			<Frames col-range="4-1" row-num="1"/>
+		</Metadata>
+		<Metadata name="shop-fig-idle" height="48" width="48" top="288">
+			<Frames col-range="1-4" row-num="1"/>
+			<Frames col-range="4-2" row-num="1"/>
+			<Frames col-range="2-3" row-num="1"/>
+			<Frames col-range="4-1" row-num="1"/>
+		</Metadata>
+
+		<Metadata name="colo-fig-walk" height="48" width="48" top="0"  left="192">
+			<Frames col-range="1-6" row-num="1"/>
+		</Metadata>
+		<Metadata name="hood-fig-walk" height="48" width="48" top="48" left="192">
+			<Frames col-range="1-6" row-num="1"/>
+		</Metadata>
+		<Metadata name="curt-fig-walk" height="48" width="48" top="96" left="192">
+			<Frames col-range="1-6" row-num="1"/>
+		</Metadata>
+		<Metadata name="guru-fig-walk" height="48" width="48" top="144" left="192">
+			<Frames col-range="1-6" row-num="1"/>
+		</Metadata>
+		<Metadata name="oarm-fig-walk" height="48" width="48" top="192" left="192">
+			<Frames col-range="1-6" row-num="1"/>
+		</Metadata>
+		<Metadata name="sass-fig-walk" height="48" width="48" top="240" left="192">
+			<Frames col-range="1-6" row-num="1"/>
+		</Metadata>
+		<Metadata name="shop-fig-walk" height="48" width="48" top="288" left="192">
+			<Frames col-range="1-6" row-num="1"/>
+		</Metadata>
+	</ImageFile>
+
+	<ImageFile filename="card_sheet.png">
+		<!-- Cards -->
+		<!-- Materials -->
+		<Metadata name="plank-card" height="192" width="128" top="0" left="0"/>
+		<Metadata name="board-card" height="192" width="128" top="0" left="128"/>
+		<Metadata name="screw-card" height="192" width="128" top="0" left="256"/>
+		<Metadata name="nail-card" height="192" width="128"  top="0" left="384"/>
+		<!-- Laborers (helpers) -->
+		<Metadata name="colo-card" height="192" width="128" top="193" left="0"/>
+		<Metadata name="shop-card" height="192" width="128" top="193" left="128"/>
+		<Metadata name="hood-card" height="192" width="128" top="193" left="256"/>
+		<Metadata name="sass-card" height="192" width="128" top="193" left="384"/>
+		<Metadata name="oarm-card" height="192" width="128" top="193" left="512"/>
+		<Metadata name="guru-card" height="192" width="128" top="193" left="640"/>
+		<Metadata name="curt-card" height="192" width="128" top="193" left="768"/>
+		<!-- Tools -->
+		<Metadata name="hammer-card"       height="192" width="128" top="385" left="0"/>
+		<Metadata name="saw-card"          height="192" width="128" top="385" left="128"/>
+		<Metadata name="drill-card"        height="192" width="128" top="385" left="256"/>
+		<Metadata name="glue-card"         height="192" width="128" top="385" left="384"/>
+		<Metadata name="circular-saw-card" height="192" width="128" top="385" left="512"/>
+		<Metadata name="nail-gun-card"     height="192" width="128" top="385" left="640"/>
+		<!-- Expertise -->
+		<Metadata name="tradesman-card"  height="192" width="128" top="577" left="0"/>
+		<Metadata name="blacksmith-card" height="192" width="128" top="577" left="128"/>
+		<Metadata name="roofer-card"     height="192" width="128" top="577" left="256"/>
+		<Metadata name="lumberjack-card" height="192" width="128" top="577" left="384"/>
+		<Metadata name="grifter-card"    height="192" width="128" top="577" left="512"/>
+		<Metadata name="duplicator-card" height="192" width="128" top="577" left="640"/>
+		<Metadata name="woodsman-card"   height="192" width="128" top="577" left="768"/>
+		<Metadata name="optimizer-card"  height="192" width="128" top="385" left="768"/>
+
+		<!-- icon sprites -->
+		<Metadata name="saw-icon"          height="32" width="32" top="0" left="512"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="hammer-icon"       height="32" width="32" top="0" left="544"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="drill-icon"        height="32" width="32" top="0" left="576"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="circular-saw-icon" height="32" width="32" top="0" left="608"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="nail-gun-icon"     height="32" width="32" top="0" left="640"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="nail-icon"         height="32" width="32" top="0" left="672"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="screw-icon"        height="32" width="32" top="0" left="704"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="plank-icon"        height="32" width="32" top="0" left="736"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="board-icon"        height="32" width="32" top="0" left="768"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+
+		<Metadata name="laborer-icon"   height="32" width="32" top="32" left="576"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="expertise-icon" height="32" width="32" top="32" left="608"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="material-icon"  height="32" width="32" top="32" left="640"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="tool-icon"      height="32" width="32" top="32" left="672"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+
+		<Metadata name="time-symbol"        height="32" width="32" top="64" left="512">
+			<Frames col-num="1" row-range="1-2"/>
+		</Metadata>
+
+		<Metadata name="use-symbol"    height="32" width="32" top="64" left="544"/>
+		<Metadata name="broken-symbol" height="32" width="32" top="96" left="544"/>
+
+		<Metadata name="quality-symbol" height="32" width="32" top="128" left="512">
+			<Frames col-range="1-3" row-num="1"/>
+		</Metadata>
+
+		<Metadata name="hold-broken-symbol" height="32" width="32" top="128" left="608"/>
+
+		<Metadata name="optimizer-symbol"  height="32" width="32" top="0"  left="768"/>
+		<Metadata name="woodsman-symbol"   height="32" width="32" top="0"  left="800"/>
+		<Metadata name="duplicator-symbol" height="32" width="32" top="0"  left="832"/>
+		<Metadata name="lumberjack-symbol" height="32" width="32" top="32" left="768"/>
+		<Metadata name="grifter-symbol"    height="32" width="32" top="32" left="800"/>
+		<Metadata name="roofer-symbol"     height="32" width="32" top="32" left="832"/>
+		<Metadata name="blacksmith-symbol" height="32" width="32" top="64" left="768"/>
+		<Metadata name="tradesman-symbol"  height="32" width="32" top="64" left="800"/>
+
+		<!-- Tiles -->
+		<Metadata name="textbox-tiles"  height="32" width="32" top="64"  left="704">
+			<Frames col-range="1-3" row-num="1"/>
+			<Frames col-range="1-3" row-num="2"/>
+			<Frames col-range="1-3" row-num="3"/>
+		</Metadata>
+
+
+
+	</ImageFile>
+
+</AssetDefinitions>

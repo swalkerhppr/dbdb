@@ -1,0 +1,55 @@
+Main Menu
+	First scene of the game. Title screen
+	Buttons:
+		New Game
+		Load Game
+		Options
+		Exit
+
+Options Menu
+	Access to any options that are available.
+	Buttons:
+		Save and Exit
+		Exit Without Saving
+
+Pause Screen
+	Pauses the game
+	Buttons:
+		Resume
+		Options
+		Back To Main Menu
+
+Store Selection
+	Player must choose a store to buy supplies from.
+	Buttons:
+		Choose Store 1
+		Choose Store 2
+		Choose Store 3
+
+Store Phase
+	Player must defeat encouters to progress to buying supplies
+
+Store Store
+	Player has an opportunity to buy stuff from the store
+	Buttons:
+		Buy (for each item)
+		Finish Shopping
+
+Store Results
+	Summary of the cards obtained during encounters and bought at the store
+	Buttons:
+		To The Worksite
+
+Worksite Phase
+	Player must combine/use cards to build the deck
+
+Day End
+	Shows the work that was finished this day and the remaining cards in the deck.
+	Buttons:
+		Next Day
+
+Project Complete
+	Shows the results of the project
+	Buttons:
+		Save and Quit
+		Next Project
