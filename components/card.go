@@ -48,15 +48,18 @@ func (c *Card) Draw(screen *ebiten.Image) {
 	if c.cardState.CardID.IsMaterial() {
 		qualitySymbol := assets.Registry.Sprite("quality-symbol")
 		// Draw Time cost and quality indicator
-		qualitySymbol.Draw(screen, int(c.cardState.MaterialQuality), ganim8.DrawOpts(float64(c.left), float64(c.top)))
-		for i := range c.cardState.TimeCost {
+		qualitySymbol.Draw(screen, int(c.cardState.Quality), ganim8.DrawOpts(float64(c.left), float64(c.top)))
+		for i := range 3 - int(c.cardState.Quality) {
 			// TODO Center the time cost
 			timeSymbol.Draw(screen, 1, ganim8.DrawOpts(float64(c.left + (i * 32) + 20), float64(c.top + 54) ))
 		}
+
 	} else if c.cardState.CardID.IsTool() {
 		brokenSymbol := assets.Registry.Sprite("broken-symbol")
 		useSymbol := assets.Registry.Sprite("use-symbol")
+		qualitySymbol := assets.Registry.Sprite("quality-symbol")
 		// Draw Time cost and Remaining uses and check broken
+		qualitySymbol.Draw(screen, int(c.cardState.Quality), ganim8.DrawOpts(float64(c.left), float64(c.top)))
 		if c.cardState.UsesLeft == 0 {
 			brokenSymbol.Draw(screen, 0, ganim8.DrawOpts(float64(c.left), float64(c.top) ))
 		} else {
@@ -70,9 +73,11 @@ func (c *Card) Draw(screen *ebiten.Image) {
 				useSymbol.Draw(screen, 0, ganim8.DrawOpts(float64(c.left + (i * 16) + 8 ), float64(c.top + 48 + topShift ) ))
 			}
 		}
-		for i := range c.cardState.TimeCost {
+
+		for i := range 2 - int(c.cardState.Quality) {
 			timeSymbol.Draw(screen, 1, ganim8.DrawOpts(float64(c.left + 86), float64(c.top + 36 + (i * 32)) ))
 		}
+
 	} else if c.cardState.CardID.IsHelper() {
 		// Draw Money cost and favorite Tool
 		favIcon := assets.Registry.Sprite(c.cardState.FavoriteTool.IconName())

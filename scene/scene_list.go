@@ -8,16 +8,22 @@ const (
 	MainMenu SceneID = iota
 	ChooseStore
 	StorePhase
+	StoreShop
+	StoreResults
 	BuildingPhase
+	DayResults
 )
 
 var SceneMap map[SceneID]stagehand.Scene[*State]
 
 func InitializeScenes(width, height int) {
 	SceneMap = map[SceneID]stagehand.Scene[*State]{
-		MainMenu    : CreateMainMenu(width, height),
-		ChooseStore : CreateChooseStore(width, height),
-		StorePhase  : CreateStorePhase(width, height),
+		MainMenu       : CreateMainMenu(width, height),
+		ChooseStore    : CreateChooseStore(width, height),
+		StorePhase     : CreateStorePhase(width, height),
+		StoreShop      : CreateStoreShop(width, height),
+		StoreResults   : CreateStoreResults(width, height),
 		BuildingPhase  : CreateBuildingPhase(width, height),
+		DayResults     : CreateDayResults(width, height),
 	}
 }

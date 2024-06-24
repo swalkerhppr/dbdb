@@ -25,10 +25,10 @@ const (
 	ShelfEncounter    = EncounterRequirement(MaterialNail | MaterialScrew)
 )
 
-type MaterialQuality byte
+type MaterialOrToolQuality byte
 
 const (
-	OneStar MaterialQuality = iota
+	OneStar MaterialOrToolQuality = iota
 	TwoStar
 	ThreeStar
 )
@@ -36,9 +36,8 @@ const (
 type CardState struct {
 	CardID  CardID
 	MoneyCost float32
-	TimeCost  int
 	UsesLeft  int
-	MaterialQuality MaterialQuality
+	Quality MaterialOrToolQuality
 	FavoriteTool CardID
 	Selected bool
 }

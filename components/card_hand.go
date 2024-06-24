@@ -25,9 +25,10 @@ type CardHand struct {
 }
 
 func (h *CardHand) Draw(screen *ebiten.Image) {
-	cards := make([]*Card, 5)
-	for i, cs := range h.state.GetHand(){
-		cards[i] = NewCard(cs, 32 + ( i * 110 ), 230)
+	hand := h.state.GetHand()
+	cards := make([]*Card, len(hand))
+	for i := range hand {
+		cards[i] = NewCard(hand[i], 32 + ( i * 110 ), 230)
 	}
 
 	clicked := inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0)

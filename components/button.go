@@ -4,12 +4,13 @@ import (
 	"dbdb/assets"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/tinne26/etxt"
 	"github.com/yohamta/ganim8/v2"
 )
 
 func NewButton(text string, x, y int, click func()) *Button {
-	r := assets.Registry.DefaultTextRenderer(16)
+	r := assets.Registry.DefaultTextRenderer(18)
 	r.SetAlign(etxt.YCenter, etxt.XCenter)
 	return &Button{
 		sprite       : assets.Registry.Sprite("MainButton"),
@@ -34,19 +35,20 @@ type Button struct {
 
 func (b *Button) Draw(screen *ebiten.Image) {
 	b.textRenderer.SetTarget(screen)
-	clicked := ebiten.IsMouseButtonPressed(ebiten.MouseButton0)
+	clicked := inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0)
+	released := inpututil.IsMouseButtonJustReleased(ebiten.MouseButton0)
 	frameIdx := 1
 
 	if IsMouseover(b.centerX, b.centerY, b.sprite.W(), b.sprite.H(), true) {
 		frameIdx = 0
 		if clicked {
 			b.pressed = true
-		} else if b.pressed && b.OnClick != nil {
+		}
+		if released && b.pressed && b.OnClick != nil {
 			b.OnClick()
-			b.pressed = false
 		}
 	}
-	if !clicked {
+	if released {
 		b.pressed = false
 	}
 	if b.pressed {

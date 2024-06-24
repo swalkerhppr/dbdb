@@ -3,6 +3,7 @@ package scene
 import (
 	"dbdb/components"
 	"dbdb/state"
+	"math/rand"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -31,6 +32,10 @@ func CreateChooseStore(width, height int) stagehand.Scene[*State] {
 			PlankPrice:   53.0,
 			NailPrice:    8.0,
 			ScrewPrice:   5.0,
+			PlankStock:   2 + rand.Intn(15),
+			BoardStock:   2 + rand.Intn(15),
+			NailStock:    2 + rand.Intn(15),
+			ScrewStock:   2 + rand.Intn(15),
 		}
 		cs.SceneManager.SwitchWithTransition(SceneMap[StorePhase], stagehand.NewDurationTimedSlideTransition[*State](stagehand.BottomToTop, time.Millisecond * 250))
 	})
@@ -43,6 +48,10 @@ func CreateChooseStore(width, height int) stagehand.Scene[*State] {
 			PlankPrice:   64.0,
 			NailPrice:    10.0,
 			ScrewPrice:   9.0,
+			PlankStock:   2 + rand.Intn(15),
+			BoardStock:   2 + rand.Intn(15),
+			NailStock:    2 + rand.Intn(15),
+			ScrewStock:   2 + rand.Intn(15),
 		}
 		cs.SceneManager.SwitchWithTransition(SceneMap[StorePhase], stagehand.NewDurationTimedSlideTransition[*State](stagehand.BottomToTop, time.Millisecond * 250))
 	})
@@ -55,6 +64,10 @@ func CreateChooseStore(width, height int) stagehand.Scene[*State] {
 			PlankPrice:   80.0,
 			NailPrice:    12.0,
 			ScrewPrice:   10.0,
+			PlankStock:   2 + rand.Intn(15),
+			BoardStock:   2 + rand.Intn(15),
+			NailStock:    2 + rand.Intn(15),
+			ScrewStock:   2 + rand.Intn(15),
 		}
 		cs.SceneManager.SwitchWithTransition(SceneMap[StorePhase], stagehand.NewDurationTimedSlideTransition[*State](stagehand.BottomToTop, time.Millisecond * 250))
 	})
@@ -69,4 +82,9 @@ func (s *chooseStore) Draw(screen *ebiten.Image) {
 	s.choice2.Draw(screen)
 	s.choice3.Draw(screen)
 	s.textBox.Draw(screen)
+}
+
+func (b *chooseStore) Load(s *State, controller stagehand.SceneController[*State]) {
+	s.TimeLeft = 24
+	b.BaseScene.Load(s, controller)
 }

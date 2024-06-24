@@ -2,8 +2,9 @@ package components
 
 import (
 	"dbdb/assets"
-	"time"
+	"dbdb/state"
 	"math/rand"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/yohamta/ganim8/v2"
@@ -65,8 +66,24 @@ type Figure struct {
 	hFlip   bool
 }
 
-func (f *Figure) CardName() string {
-	return f.name + "-card"
+func (f *Figure) CardID() state.CardID {
+	switch f.name {
+	case "colo":
+		return state.HelperColo
+	case "hood":
+		return state.HelperHood
+	case "curt":
+		return state.HelperCurt
+	case "guru":
+		return state.HelperGuru
+	case "oarm":
+		return state.HelperOarm
+	case "sass":
+		return state.HelperSass
+	case "shop":
+		return state.HelperShop
+	}
+	return state.CardID(0)
 }
 
 func (f *Figure) Draw(screen *ebiten.Image) {

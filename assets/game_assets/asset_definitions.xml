@@ -87,7 +87,7 @@
 		<Metadata name="board-card" height="192" width="128" top="0" left="128"/>
 		<Metadata name="screw-card" height="192" width="128" top="0" left="256"/>
 		<Metadata name="nail-card" height="192" width="128"  top="0" left="384"/>
-		<!-- Laborers (helpers) -->
+		<!-- Helpers -->
 		<Metadata name="colo-card" height="192" width="128" top="193" left="0"/>
 		<Metadata name="shop-card" height="192" width="128" top="193" left="128"/>
 		<Metadata name="hood-card" height="192" width="128" top="193" left="256"/>
@@ -112,6 +112,9 @@
 		<Metadata name="woodsman-card"   height="192" width="128" top="577" left="768"/>
 		<Metadata name="optimizer-card"  height="192" width="128" top="385" left="768"/>
 
+		<!-- saving from unknown card crashes -->
+		<Metadata name="unknown-card" height="32" width="32" top="64" left="608"> </Metadata>
+
 		<!-- icon sprites -->
 		<Metadata name="saw-icon"          height="32" width="32" top="0" left="512"> <Frames col-num="1" row-range="1-2"/> </Metadata>
 		<Metadata name="hammer-icon"       height="32" width="32" top="0" left="544"> <Frames col-num="1" row-range="1-2"/> </Metadata>
@@ -123,10 +126,10 @@
 		<Metadata name="plank-icon"        height="32" width="32" top="0" left="736"> <Frames col-num="1" row-range="1-2"/> </Metadata>
 		<Metadata name="board-icon"        height="32" width="32" top="0" left="768"> <Frames col-num="1" row-range="1-2"/> </Metadata>
 
-		<Metadata name="laborer-icon"   height="32" width="32" top="32" left="576"> <Frames col-num="1" row-range="1-2"/> </Metadata>
-		<Metadata name="expertise-icon" height="32" width="32" top="32" left="608"> <Frames col-num="1" row-range="1-2"/> </Metadata>
-		<Metadata name="material-icon"  height="32" width="32" top="32" left="640"> <Frames col-num="1" row-range="1-2"/> </Metadata>
-		<Metadata name="tool-icon"      height="32" width="32" top="32" left="672"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="laborer-icon"   height="32" width="32" top="64" left="576"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="expertise-icon" height="32" width="32" top="64" left="608"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="material-icon"  height="32" width="32" top="64" left="640"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="tool-icon"      height="32" width="32" top="64" left="672"> <Frames col-num="1" row-range="1-2"/> </Metadata>
 
 		<Metadata name="time-symbol"        height="32" width="32" top="64" left="512">
 			<Frames col-num="1" row-range="1-2"/>
@@ -140,6 +143,8 @@
 		</Metadata>
 
 		<Metadata name="hold-broken-symbol" height="32" width="32" top="128" left="608"/>
+		<Metadata name="money-symbol"       height="32" width="32" top="128" left="640"/>
+		<Metadata name="card-symbol"        height="32" width="32" top="128" left="672"/>
 
 		<Metadata name="optimizer-symbol"  height="32" width="32" top="0"  left="768"/>
 		<Metadata name="woodsman-symbol"   height="32" width="32" top="0"  left="800"/>
@@ -155,6 +160,15 @@
 			<Frames col-range="1-3" row-num="1"/>
 			<Frames col-range="1-3" row-num="2"/>
 			<Frames col-range="1-3" row-num="3"/>
+		</Metadata>
+
+		<Metadata name="deck-tiles"  height="16" width="16" top="64"  left="704">
+			<!-- board Top left stop, top left coninue, top right continue, top right stop -->
+			<Frames col-range="1-4" row-num="1"/>
+			<!-- Plank left, bareboard, bareboard, plank right -->
+			<Frames col-range="1-4" row-num="2"/>
+			<!-- Grass left, grass left, grass right, grass right -->
+			<Frames col-range="1-4" row-num="3"/>
 		</Metadata>
 
 
