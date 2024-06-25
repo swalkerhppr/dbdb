@@ -2,7 +2,7 @@ package scene
 
 import (
 	"dbdb/components"
-	"errors"
+	//"errors"
 	"log"
 	"time"
 
@@ -24,15 +24,15 @@ func CreateMainMenu(width, height int) stagehand.Scene[*State] {
 		BaseScene: NewBaseWithBG(width, height, "mainmenu.png"), 
 	}
 
-	mm.startButton = components.NewButton("Start Game", 320, 176, func() {
+	mm.startButton = components.NewButton("Start", 320, 176, func() {
 		mm.BaseScene.SceneManager.SwitchWithTransition(SceneMap[ChooseStore], stagehand.NewDurationTimedSlideTransition[*State](stagehand.RightToLeft, time.Millisecond * 500))
 	})
-	mm.loadButton = components.NewButton("Load Game", 320, 224, func() {
+	mm.loadButton = components.NewButton("About", 320, 224, func() {
 		log.Println("load Clicked!")
 	})
-	mm.exitButton = components.NewButton("Exit", 320, 272, func() {
-		mm.BaseScene.Stop = errors.New("User Exit")
-	})
+	//mm.exitButton = components.NewButton("Exit", 320, 272, func() {
+	//	mm.BaseScene.Stop = errors.New("User Exit")
+	//})
 	return mm
 }
 

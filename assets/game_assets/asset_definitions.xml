@@ -175,7 +175,7 @@
 			<Frames col-range="1-3" row-num="3"/>
 		</Metadata>
 
-		<Metadata name="deck-tiles"  height="16" width="16" top="64"  left="704">
+		<Metadata name="deck-tiles"  height="16" width="16" top="96"  left="800">
 			<!-- board Top left stop, top left coninue, top right continue, top right stop -->
 			<Frames col-range="1-4" row-num="1"/>
 			<!-- Plank left, bareboard, bareboard, plank right -->

@@ -47,6 +47,8 @@ func (s *buildingPhase) Draw(screen *ebiten.Image) {
 	}
 	s.DrawIndicators(screen)
 	components.NewCardSlots(s.State, 10, 186).Draw(screen)
+	components.NewDeckIndicators(s.State, 10, 310, 0).Draw(screen)
+	components.NewDeckPieces(s.State.PlankPartsBuilt, s.State.BoardPartsBuilt).Draw(screen)
 }
 
 func (p *buildingPhase) Load(s *State, controller stagehand.SceneController[*State]) {
@@ -58,7 +60,9 @@ func (p *buildingPhase) Load(s *State, controller stagehand.SceneController[*Sta
 
 func (b *buildingPhase) Unload() *State {
 	for _, c := range b.State.HeldCards {
-		b.State.AddCard(c)
+		if !c.CardID.IsEmptyCardSlot() {
+			b.State.AddCard(c)
+		}
 	}
 	for _, h := range b.State.ActiveHelpers {
 		b.State.AddCard(h.Card)

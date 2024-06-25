@@ -29,7 +29,10 @@ func main() {
 
 	globalState.ShuffleCards(0, 6)
 
-	sm := stagehand.NewSceneManager[*scene.State](scene.SceneMap[scene.MainMenu], globalState)
+	startAt := scene.MainMenu
+	//startAt := scene.BuildingPhase
+
+	sm := stagehand.NewSceneManager[*scene.State](scene.SceneMap[startAt], globalState)
 
 	if err := ebiten.RunGame(sm); err != nil {
 		log.Fatal(err)

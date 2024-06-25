@@ -206,6 +206,18 @@ func (c CardID) DisplayName() string {
 	return strings.Replace(name, "-", " ", 1)
 }
 
+func (c CardID) ToolQuality() MaterialOrToolQuality {
+	switch c {
+	case ToolHammer, ToolSaw:
+		return OneStar
+	case ToolCircularSaw, ToolNailGun:
+		return MaterialOrToolQuality(1 + rand.Intn(2))
+	case ToolGlue:
+		return OneStar
+	}
+	return OneStar
+}
+
 func (c CardID) IsEmptyCardSlot() bool {
 	return c & EmptyCardSlot != 0
 }

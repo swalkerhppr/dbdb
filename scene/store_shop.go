@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"image/color"
 	"log"
-	"math/rand"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -35,13 +34,13 @@ func CreateStoreShop(width, height int) stagehand.Scene[*State] {
 	}
 	ss.AdjustAlertPosition(230, 250)
 
-	ss.continueButton = components.NewButton("Finish", 483, 320, func() {
-		ss.SceneManager.SwitchWithTransition(SceneMap[StoreResults], stagehand.NewDurationTimedSlideTransition[*State](stagehand.RightToLeft, time.Millisecond * 500))
+	ss.continueButton = components.NewButton("To Building...", 483, 320, func() {
+		ss.SceneManager.SwitchWithTransition(SceneMap[BuildingPhase], stagehand.NewDurationTimedSlideTransition[*State](stagehand.RightToLeft, time.Millisecond * 500))
 	})
 	ss.repairButton = components.NewButton("Repair Tools", 483, 360, func() {
 		for _, c := range ss.State.Deck {
-			if c.UsesLeft < 4 {
-				total := float32(4 - c.UsesLeft) * 5
+			if c.CardID.IsTool() && c.UsesLeft < 4 {
+				total := float32(4 - c.UsesLeft) * 25
 				if total < ss.State.MoneyLeft {
 					ss.State.MoneyLeft -= total
 					c.UsesLeft = 4
@@ -72,14 +71,16 @@ func (ss *storeShop) Load(s *State, controller stagehand.SceneController[*State]
 		Quality:      s.ChosenStore.StoreQuality,
 	}
 	s.ChosenStore.AvailableTools = make([]*state.CardState, 2)
+	toolID := state.RandomToolID()
 	s.ChosenStore.AvailableTools[0] = &state.CardState{
-		CardID:   state.RandomToolID(),
-		Quality:  state.MaterialOrToolQuality(1 + rand.Intn(2)),
+		CardID:   toolID,
+		Quality:  toolID.ToolQuality(),
 		UsesLeft: 4,
 	}
+	toolID = state.RandomToolID()
 	s.ChosenStore.AvailableTools[1] = &state.CardState{
-		CardID:   state.RandomToolID(),
-		Quality:  state.MaterialOrToolQuality(1 + rand.Intn(2)),
+		CardID:   toolID,
+		Quality:  toolID.ToolQuality(),
 		UsesLeft: 4,
 	}
 	s.Phase = state.StorePhase
@@ -126,15 +127,17 @@ func (ss *storeShop) Draw(screen *ebiten.Image) {
 		r.SetAlign(etxt.Top, etxt.Right)
 		r.SetColor(moneyGreen)
 		if tool.Quality == state.ThreeStar {
-			r.Draw("$200", 220, 255)
+			r.Draw("$200", 220, 270)
 		} else {
-			r.Draw("$100", 220, 255)
+			r.Draw("$100", 220, 270)
 		}
 
 		r.SetAlign(etxt.Bottom, etxt.Right)
 		r.SetColor(color.Black)
 		r.Draw("1", 220, 440)
 	}
+
+	components.NewShopDeckIndicators(ss.State, 4, 235, 300).Draw(screen)
 
 	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButton0) {
 		if components.IsMouseover(40, 50, 128, 198, false) {

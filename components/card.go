@@ -16,6 +16,11 @@ func RandomCard(left, top int) *Card {
 }
 
 func NewCard(cid *state.CardState, left, top int) *Card {
+	if cid == nil {
+		cid = &state.CardState{
+			CardID: state.UnknownCard,
+		}
+	}
 	return &Card{
 		cardState : cid,
 		sprite : assets.Registry.Sprite(cid.CardID.AssetName()),

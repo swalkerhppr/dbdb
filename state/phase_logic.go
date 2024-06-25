@@ -183,14 +183,14 @@ func (s *GlobalState) playBuildCard() bool {
 
 
 	switch card1.Combine(allSelected[1:]...){
-	case PlankNailHammer, PlankScrewDrill:
+	case PlankNailHammer, PlankNailNailGun, PlankScrewDrill:
 		if s.PlankPartsBuilt >= s.RequiredPlankParts {
 			s.alert("You don't need anymore PLANK parts!")
 			return false
 		}
 		s.PlankPartsBuilt++
 		s.alert(fmt.Sprintf("Deck PLANK part built!(%d/%d)", s.PlankPartsBuilt, s.RequiredPlankParts))
-	case BoardNailHammer, BoardScrewDrill:
+	case BoardNailHammer, BoardNailNailGun, BoardScrewDrill:
 		if s.PlankPartsBuilt >= s.RequiredPlankParts {
 			s.alert("You don't need anymore BOARD part!")
 			return false

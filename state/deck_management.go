@@ -11,7 +11,30 @@ func (s *GlobalState) CardsLeftInDeck() int {
 	return len(s.Deck) - s.topCardIdx
 }
 
+func (s *GlobalState) SellCardWithID(cid CardID) {
+	price := 3
+	switch {
+	case cid.IsExpertise():
+		price = 100
+	case cid.IsTool():
+		price = 50
+	}
+
+	for _, c := range s.Deck {
+		if c.CardID & cid != 0 {
+			log.Printf("Sold %+v", c)
+			s.MoneyLeft += float32(price)
+			s.DestroyCard(c)
+			return
+		}
+	}
+}
+
 func (s *GlobalState) BuyCard(card *CardState, cost float32, stock int) int {
+	if len(s.Deck) >= 30 {
+		s.alert("Can't buy anymore cards")
+		return stock
+	}
 	if s.MoneyLeft < cost {
 		s.alert("Not enough money!")
 		return stock
@@ -100,12 +123,16 @@ func (s *GlobalState) DiscardHand() bool {
 	log.Printf("Discarding hand: %d-%d", s.handStartIdx, s.topCardIdx)
 	s.handStartIdx += 5
 	s.topCardIdx = s.handStartIdx + 5
-	if s.topCardIdx > len(s.Deck) && len(s.Deck) >= 5 {
+	if s.topCardIdx > len(s.Deck) && len(s.Deck) > 5 {
 		log.Printf("Shuffling: %d-%d", s.handStartIdx, s.topCardIdx)
+		if s.handStartIdx >= len(s.Deck) {
+			s.handStartIdx = len(s.Deck)
+			s.topCardIdx = len(s.Deck)
+		}
 		s.ShuffleCards(len(s.Deck) - s.handStartIdx, 4)
 		shuffled = true
 	}
-	if len(s.Deck) < 5 {
+	if len(s.Deck) <= 5 {
 		s.handStartIdx = 0
 		s.topCardIdx = len(s.Deck)
 	}
