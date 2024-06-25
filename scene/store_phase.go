@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/joelschutz/stagehand"
 )
 
@@ -49,28 +48,36 @@ func CreateStorePhase(width, height int) stagehand.Scene[*State] {
 
 func (s *storePhase) Draw(screen *ebiten.Image) {
 	s.DrawScene(screen)
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton1) {
-		s.nextEncounter()
-	}
 	encounterCounter := fmt.Sprintf("Encounter %d/%d\n", s.State.EncounterNumber+1, len(s.State.ChosenStore.Encounters))
 	switch s.State.CurrentEncounter {
 	case state.EmployeeEncounter:
 		// tool type or expertise type
 		s.textBox.SetText(encounterCounter + "Employee: How can I help you?")
+		s.textBox.Draw(screen)
 		s.encounterNPC.Draw(screen)
+		components.NewIndicator("tool-icon-grey", " OR", 328, 96).Draw(screen)
+		components.NewIndicator("expertise-icon-grey", "", 379, 98).Draw(screen)
 	case state.NeighborEncounter:
 		// tool type or helper type
 		s.textBox.SetText(encounterCounter + "Neighbor: Did you see the game last night?")
+		s.textBox.Draw(screen)
 		s.encounterNPC.Draw(screen)
+		components.NewIndicator("tool-icon-grey", " OR", 328, 96).Draw(screen)
+		components.NewIndicator("helper-icon-grey", "", 379, 98).Draw(screen)
 	case state.HoleEncounter:
 		// plank or board type
-		s.textBox.SetText(encounterCounter + "There is a big hole in the ground. Put a board or plank over it?")
+		s.textBox.SetText(encounterCounter + "You see a hole in the ground. Cover it?")
+		s.textBox.Draw(screen)
+		components.NewIndicator("plank-icon-grey", "  OR", 328, 96).Draw(screen)
+		components.NewIndicator("board-icon-grey", "", 385, 96).Draw(screen)
 	case state.ShelfEncounter:
 		// fastener or nail type
 		s.textBox.SetText(encounterCounter + "A shelf is falling apart. Fix it with a nail or screw?")
+		s.textBox.Draw(screen)
+		components.NewIndicator("nail-icon-grey", "  OR", 328, 96).Draw(screen)
+		components.NewIndicator("screw-icon-grey", "", 385, 96).Draw(screen)
 
 	}
-	s.textBox.Draw(screen)
 	s.hand.Draw(screen)
 	s.discardButton.Draw(screen)
 	s.playButton.Draw(screen)
@@ -99,7 +106,7 @@ func (s *storePhase) nextEncounter() {
 }
 
 func (p *storePhase) Load(s *State, controller stagehand.SceneController[*State]) {
-	// Generate random encounters and available items
+	// Generate random encounters
 	numEncounters := 0
 	switch s.ChosenStore.StoreQuality {
 	case state.OneStar:
@@ -124,17 +131,6 @@ func (p *storePhase) Load(s *State, controller stagehand.SceneController[*State]
 		 } else {
 			 s.ChosenStore.Encounters[i] = state.EmployeeEncounter
 		 }
-	}
-	s.ChosenStore.AvailableTools = make([]*state.CardState, 2)
-	s.ChosenStore.AvailableTools[0] = &state.CardState{
-		CardID:   state.RandomToolID(),
-		Quality:  state.MaterialOrToolQuality(1 + rand.Intn(2)),
-		UsesLeft: 4,
-	}
-	s.ChosenStore.AvailableTools[1] = &state.CardState{
-		CardID:   state.RandomToolID(),
-		Quality:  state.MaterialOrToolQuality(1 + rand.Intn(2)),
-		UsesLeft: 4,
 	}
 	s.Phase = state.StorePhase
 	s.EncounterNumber = 0

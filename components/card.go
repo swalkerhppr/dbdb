@@ -80,6 +80,9 @@ func (c *Card) Draw(screen *ebiten.Image) {
 
 	} else if c.cardState.CardID.IsHelper() {
 		// Draw Money cost and favorite Tool
+		if c.cardState.FavoriteTool == state.ToolGlue {
+			c.cardState.FavoriteTool = state.ToolDrill
+		}
 		favIcon := assets.Registry.Sprite(c.cardState.FavoriteTool.IconName())
 		favIcon.Draw(screen, 1, ganim8.DrawOpts(float64(c.left + 71), float64(c.top + 103)))
 		r := assets.Registry.DefaultTextRenderer(24)

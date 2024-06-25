@@ -55,3 +55,16 @@ func (p *buildingPhase) Load(s *State, controller stagehand.SceneController[*Sta
 	p.hand = components.NewCardHand(s)
 	p.BaseScene.Load(s, controller)
 }
+
+func (b *buildingPhase) Unload() *State {
+	for _, c := range b.State.HeldCards {
+		b.State.AddCard(c)
+	}
+	for _, h := range b.State.ActiveHelpers {
+		b.State.AddCard(h.Card)
+	}
+	b.State.HeldCards = b.State.HeldCards[0:0]
+	b.State.ActiveHelpers = b.State.ActiveHelpers[0:0]
+	return b.State
+}
+

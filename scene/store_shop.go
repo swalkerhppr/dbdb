@@ -1,15 +1,19 @@
 package scene
 
 import (
+	"dbdb/assets"
 	"dbdb/components"
 	"dbdb/state"
 	"fmt"
 	"image/color"
+	"log"
+	"math/rand"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/joelschutz/stagehand"
+	"github.com/tinne26/etxt"
 )
 
 type storeShop struct {
@@ -27,7 +31,7 @@ type storeShop struct {
 
 func CreateStoreShop(width, height int) stagehand.Scene[*State] {
 	ss := &storeShop{
-		BaseScene: NewBaseWithFill(width, height, color.Black), 
+		BaseScene: NewBaseWithFill(width, height, color.White), 
 	}
 	ss.AdjustAlertPosition(230, 250)
 
@@ -37,7 +41,7 @@ func CreateStoreShop(width, height int) stagehand.Scene[*State] {
 	ss.repairButton = components.NewButton("Repair Tools", 483, 360, func() {
 		for _, c := range ss.State.Deck {
 			if c.UsesLeft < 4 {
-				total := float32(4 - c.UsesLeft) * 50
+				total := float32(4 - c.UsesLeft) * 5
 				if total < ss.State.MoneyLeft {
 					ss.State.MoneyLeft -= total
 					c.UsesLeft = 4
@@ -67,23 +71,69 @@ func (ss *storeShop) Load(s *State, controller stagehand.SceneController[*State]
 		CardID:       state.MaterialScrew,
 		Quality:      s.ChosenStore.StoreQuality,
 	}
+	s.ChosenStore.AvailableTools = make([]*state.CardState, 2)
+	s.ChosenStore.AvailableTools[0] = &state.CardState{
+		CardID:   state.RandomToolID(),
+		Quality:  state.MaterialOrToolQuality(1 + rand.Intn(2)),
+		UsesLeft: 4,
+	}
+	s.ChosenStore.AvailableTools[1] = &state.CardState{
+		CardID:   state.RandomToolID(),
+		Quality:  state.MaterialOrToolQuality(1 + rand.Intn(2)),
+		UsesLeft: 4,
+	}
+	s.Phase = state.StorePhase
+	s.EncounterNumber = 0
+	s.CurrentEncounter = s.ChosenStore.Encounters[0]
+	log.Printf("Populated Store: %+v", s.ChosenStore)
+
+	s.ClearSelectedCards()
 	ss.BaseScene.Load(s, controller)
 }
-
 func (ss *storeShop) Draw(screen *ebiten.Image) {
+	moneyGreen := color.RGBA{0, 200, 50, 255}
 	ss.DrawScene(screen)
 	ss.continueButton.Draw(screen)
 	ss.repairButton.Draw(screen)
-	components.NewIndicatorWithColor("money-symbol", fmt.Sprintf("%d", int(ss.State.MoneyLeft)), 260, 10, color.RGBA{0, 200, 50, 255}).Draw(screen)
+	components.NewIndicatorWithColor("money-symbol", fmt.Sprintf("%d", int(ss.State.MoneyLeft)), 260, 10, moneyGreen).Draw(screen)
 	components.NewCard(ss.plankCard, 40, 50).Draw(screen)
 	components.NewCard(ss.boardCard, 170, 50).Draw(screen)
 	components.NewCard(ss.nailCard, 300, 50).Draw(screen)
 	components.NewCard(ss.screwCard, 430, 50).Draw(screen)
 
+	r := assets.Registry.DefaultTextRenderer(17)
+	r.SetAlign(etxt.Top, etxt.Right)
+	r.SetTarget(screen)
+
+	r.SetColor(moneyGreen)
+	r.Draw(fmt.Sprintf("$%.0f ", ss.State.ChosenStore.PlankPrice), 163, 55)
+	r.Draw(fmt.Sprintf("$%.0f ", ss.State.ChosenStore.BoardPrice), 293, 55)
+	r.Draw(fmt.Sprintf("$%.0f ", ss.State.ChosenStore.NailPrice),  423, 55)
+	r.Draw(fmt.Sprintf("$%.0f ", ss.State.ChosenStore.ScrewPrice), 553, 55)
+	
+	r.SetAlign(etxt.Bottom, etxt.Right)
+	r.SetColor(color.Black)
+	r.Draw(fmt.Sprintf("%d", ss.State.ChosenStore.PlankStock), 165, 245)
+	r.Draw(fmt.Sprintf("%d", ss.State.ChosenStore.BoardStock), 295, 245)
+	r.Draw(fmt.Sprintf("%d", ss.State.ChosenStore.NailStock),  425, 245)
+	r.Draw(fmt.Sprintf("%d", ss.State.ChosenStore.ScrewStock), 555, 245)
+
 	var tool *state.CardState
 	if ss.toolBought < 2 {
 		tool = ss.State.ChosenStore.AvailableTools[ss.toolBought]
 		components.NewCard(tool, 100, 250).Draw(screen)
+
+		r.SetAlign(etxt.Top, etxt.Right)
+		r.SetColor(moneyGreen)
+		if tool.Quality == state.ThreeStar {
+			r.Draw("$200", 220, 255)
+		} else {
+			r.Draw("$100", 220, 255)
+		}
+
+		r.SetAlign(etxt.Bottom, etxt.Right)
+		r.SetColor(color.Black)
+		r.Draw("1", 220, 440)
 	}
 
 	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButton0) {
@@ -98,13 +148,17 @@ func (ss *storeShop) Draw(screen *ebiten.Image) {
 		} else if components.IsMouseover(100, 250, 128, 198, false) && tool != nil {
 				switch tool.Quality {
 				case state.OneStar:
-					// Shouldn't ever happen
+					if ss.State.BuyCard(tool, 100, 1) == 0 {
+						ss.toolBought++
+					}
 				case state.TwoStar:
-					ss.State.BuyCard(tool, 100, 1)
-					ss.toolBought++
+					if ss.State.BuyCard(tool, 100, 1) == 0 {
+						ss.toolBought++
+					}
 				case state.ThreeStar:
-					ss.State.BuyCard(tool, 200, 1)
-					ss.toolBought++
+					if ss.State.BuyCard(tool, 200, 1) == 0 {
+						ss.toolBought++
+					}
 			}
 		}
 	}

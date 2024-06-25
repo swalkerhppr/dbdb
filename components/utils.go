@@ -1,12 +1,15 @@
 package components
 
 import (
-
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 func IsMouseover(left, top, w, h int, center bool) bool {
-	ww, wh := ebiten.WindowSize()
+	//ww, wh := ebiten.WindowSize()
+	//if ww == 0 {
+	//	ww, wh = ebiten.Monitor().Size()
+	//}
+	ww, wh := 640, 480
 	xm, ym := ebiten.CursorPosition()
 	if center {
 		top = top - h/2

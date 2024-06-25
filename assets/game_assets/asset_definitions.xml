@@ -125,11 +125,24 @@
 		<Metadata name="screw-icon"        height="32" width="32" top="0" left="704"> <Frames col-num="1" row-range="1-2"/> </Metadata>
 		<Metadata name="plank-icon"        height="32" width="32" top="0" left="736"> <Frames col-num="1" row-range="1-2"/> </Metadata>
 		<Metadata name="board-icon"        height="32" width="32" top="0" left="768"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="saw-icon-grey"          height="32" width="32" top="32" left="512"/>
+		<Metadata name="hammer-icon-grey"       height="32" width="32" top="32" left="544"/>
+		<Metadata name="drill-icon-grey"        height="32" width="32" top="32" left="576"/>
+		<Metadata name="circular-saw-icon-grey" height="32" width="32" top="32" left="608"/>
+		<Metadata name="nail-gun-icon-grey"     height="32" width="32" top="32" left="640"/>
+		<Metadata name="nail-icon-grey"         height="32" width="32" top="32" left="672"/>
+		<Metadata name="screw-icon-grey"        height="32" width="32" top="32" left="704"/>
+		<Metadata name="plank-icon-grey"        height="32" width="32" top="32" left="736"/>
+		<Metadata name="board-icon-grey"        height="32" width="32" top="32" left="768"/>
 
-		<Metadata name="laborer-icon"   height="32" width="32" top="64" left="576"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="helper-icon"    height="32" width="32" top="64" left="576"> <Frames col-num="1" row-range="1-2"/> </Metadata>
 		<Metadata name="expertise-icon" height="32" width="32" top="64" left="608"> <Frames col-num="1" row-range="1-2"/> </Metadata>
 		<Metadata name="material-icon"  height="32" width="32" top="64" left="640"> <Frames col-num="1" row-range="1-2"/> </Metadata>
 		<Metadata name="tool-icon"      height="32" width="32" top="64" left="672"> <Frames col-num="1" row-range="1-2"/> </Metadata>
+		<Metadata name="helper-icon-grey"    height="32" width="32" top="96" left="576"/>
+		<Metadata name="expertise-icon-grey" height="32" width="32" top="96" left="608"/>
+		<Metadata name="material-icon-grey"  height="32" width="32" top="96" left="640"/>
+		<Metadata name="tool-icon-grey"      height="32" width="32" top="96" left="672"/>
 
 		<Metadata name="time-symbol"        height="32" width="32" top="64" left="512">
 			<Frames col-num="1" row-range="1-2"/>

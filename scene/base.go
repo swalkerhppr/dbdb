@@ -48,10 +48,10 @@ func NewBaseWithFill(width, height int, color color.Color) *BaseScene {
 
 func ScaleOpts() *ebiten.DrawImageOptions {
 	// images are based on a 640x480 image size
-	opts := &ebiten.DrawImageOptions{}
-	actW, actH := ebiten.WindowSize()
-	opts.GeoM.Scale(float64(actW) / 640, float64(actH) / 480)
-	return opts
+	//opts := &ebiten.DrawImageOptions{}
+	//actW, actH := ebiten.WindowSize()
+	//opts.GeoM.Scale(float64(actW) / 640, float64(actH) / 480)
+	return nil
 }
 
 func (b *BaseScene) AdjustAlertPosition(left, top int) {

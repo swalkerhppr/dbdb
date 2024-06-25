@@ -150,8 +150,9 @@ func (s *GlobalState) playBuildCard() bool {
 	if len(allSelected) == 1 {
 		switch card1.CardID.CardType() {
 		case HelperType:
-			s.DeployHelper(card1)
-			s.DestroyCard(card1)
+			if s.DeployHelper(card1) {
+				s.DestroyCard(card1)
+			}
 		case ExpertiseType:
 			// TODO Queue up special effect
 			s.DiscardCard(card1)
