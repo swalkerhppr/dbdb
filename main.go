@@ -25,12 +25,9 @@ func main() {
 	assets.InitRegistry()
 	scene.InitializeScenes(screenWidth, screenHeight)
 
-	globalState := state.InitialState()
-
-	globalState.ShuffleCards(0, 6)
+	globalState := &state.GlobalState{}
 
 	startAt := scene.MainMenu
-	//startAt := scene.BuildingPhase
 
 	sm := stagehand.NewSceneManager[*scene.State](scene.SceneMap[startAt], globalState)
 

@@ -1,6 +1,7 @@
 package state
 
 import (
+	"dbdb/assets"
 	"fmt"
 	"log"
 	"math/rand"
@@ -12,12 +13,21 @@ func (s *GlobalState) CardsLeftInDeck() int {
 }
 
 func (s *GlobalState) SellCardWithID(cid CardID) {
-	price := 3
+	if s.TimeLeft == 0 {
+		s.alert("Not enough time!")
+		return
+	}
+
+	price := 5
 	switch {
 	case cid.IsExpertise():
 		price = 100
 	case cid.IsTool():
 		price = 50
+	case cid == MaterialPlank:
+		price = 25
+	case cid == MaterialBoard:
+		price = 10
 	}
 
 	for _, c := range s.Deck {
@@ -25,12 +35,17 @@ func (s *GlobalState) SellCardWithID(cid CardID) {
 			log.Printf("Sold %+v", c)
 			s.MoneyLeft += float32(price)
 			s.DestroyCard(c)
+			s.TimeLeft--
 			return
 		}
 	}
 }
 
 func (s *GlobalState) BuyCard(card *CardState, cost float32, stock int) int {
+	if s.TimeLeft == 0 {
+		s.alert("Not enough time!")
+		return stock
+	}
 	if len(s.Deck) >= 30 {
 		s.alert("Can't buy anymore cards")
 		return stock
@@ -44,6 +59,7 @@ func (s *GlobalState) BuyCard(card *CardState, cost float32, stock int) int {
 		return 0
 	}
 	s.MoneyLeft -= cost
+	s.TimeLeft--
 	s.AddCard(&CardState{
 		CardID:       card.CardID,
 		UsesLeft:     card.UsesLeft,
@@ -51,6 +67,7 @@ func (s *GlobalState) BuyCard(card *CardState, cost float32, stock int) int {
 		Selected:     false,
 	})
 	s.alert(fmt.Sprintf("Bought %v for $%.2f", card, cost))
+
 	return stock-1
 }
 
@@ -138,6 +155,7 @@ func (s *GlobalState) DiscardHand() bool {
 	}
 	log.Printf("New hand: %d-%d", s.handStartIdx, s.topCardIdx)
 	s.ClearSelectedCards()
+	assets.Registry.Sound("dealcards.ogg").Play()
 	return shuffled
 }
 
@@ -183,6 +201,7 @@ func (s *GlobalState) DrawCard() bool {
 	// Draw a card
 	s.handStartIdx++
 	s.topCardIdx++
+	assets.Registry.Sound("singlecard.ogg").Play()
 	if s.topCardIdx > len(s.Deck) {
 		s.ShuffleCards(4, 4)
 		return true
@@ -230,5 +249,6 @@ func (s *GlobalState) ShuffleCards(rem, numShuffles int) {
 	}
 	s.handStartIdx = 0
 	s.topCardIdx = 5
+	assets.Registry.Sound("shuffle.ogg").Play()
 	log.Printf("Post shuffle: %v", s.Deck)
 }

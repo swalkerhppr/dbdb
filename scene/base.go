@@ -70,9 +70,9 @@ func (b *BaseScene) DrawScene(screen *ebiten.Image) {
 }
 
 func (b *BaseScene) DrawIndicators(screen *ebiten.Image) {
-	components.NewIndicator("time-symbol", fmt.Sprintf("x %d", b.State.TimeLeft), 400, 435).Draw(screen)
-	components.NewIndicatorWithColor("money-symbol", fmt.Sprintf("%d", int(b.State.MoneyLeft)), 10, 10, color.RGBA{0, 200, 50, 255}).Draw(screen)
-	components.NewIndicator("card-symbol", fmt.Sprintf("%d/%d", b.State.CardsLeftInDeck(), len(b.State.Deck)), 315, 435).Draw(screen)
+	components.NewIndicator("time-symbol", fmt.Sprintf("x%d", b.State.TimeLeft), 400, 435).Draw(screen)
+	components.NewIndicator("money-symbol", fmt.Sprintf("%d", int(b.State.MoneyLeft)), 10, 5).Draw(screen)
+	components.NewIndicator("card-symbol", fmt.Sprintf(" %d/%d", b.State.CardsLeftInDeck(), len(b.State.Deck)), 315, 435).Draw(screen)
 }
 
 // Draw implements stagehand.Scene
@@ -88,7 +88,6 @@ func (b *BaseScene) Layout(outsideWidth, outsideHeight int) (int, int) {
 // Load implements stagehand.Scene.
 func (b *BaseScene) Load(s *State, controller stagehand.SceneController[*State]) {
 	log.Printf("Loading State: %+v", s)
-	s.ShuffleCards(0, 4)
 	b.State = s
 	b.SceneManager = controller.(*stagehand.SceneManager[*State])
 }

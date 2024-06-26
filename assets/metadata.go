@@ -2,11 +2,13 @@ package assets
 
 type MetadataMap struct {
 	ImageFiles   []FileInfo `xml:"ImageFile"`
+	AudioFiles   []FileInfo `xml:"AudioFile"`
 }
 
 type FileInfo struct {
-	Filename string `xml:"filename,attr"`
+	Filename     string     `xml:"filename,attr"`
 	FileMetadata []Metadata `xml:"Metadata"`
+	Volume       float64    `xml:"volume,attr"`
 }
 
 type Metadata struct {

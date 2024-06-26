@@ -6,7 +6,6 @@ import (
 	"dbdb/state"
 	"fmt"
 	"image/color"
-	"log"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -30,12 +29,12 @@ type storeShop struct {
 
 func CreateStoreShop(width, height int) stagehand.Scene[*State] {
 	ss := &storeShop{
-		BaseScene: NewBaseWithFill(width, height, color.White), 
+		BaseScene: NewBaseWithBG(width, height, "store_shop.png"), 
 	}
 	ss.AdjustAlertPosition(230, 250)
 
-	ss.continueButton = components.NewButton("To Building...", 483, 320, func() {
-		ss.SceneManager.SwitchWithTransition(SceneMap[BuildingPhase], stagehand.NewDurationTimedSlideTransition[*State](stagehand.RightToLeft, time.Millisecond * 500))
+	ss.continueButton = components.NewButton("Get Building!", 483, 320, func() {
+		ss.SceneManager.SwitchWithTransition(SceneMap[BuildingPhase], stagehand.NewDurationTimedFadeTransition[*State](time.Millisecond * 100))
 	})
 	ss.repairButton = components.NewButton("Repair Tools", 483, 360, func() {
 		for _, c := range ss.State.Deck {
@@ -43,6 +42,9 @@ func CreateStoreShop(width, height int) stagehand.Scene[*State] {
 				total := float32(4 - c.UsesLeft) * 25
 				if total < ss.State.MoneyLeft {
 					ss.State.MoneyLeft -= total
+					if int(total/2) < ss.State.TimeLeft {
+						ss.State.TimeLeft -= int(total / 2)
+					}
 					c.UsesLeft = 4
 				} else {
 					break
@@ -84,9 +86,7 @@ func (ss *storeShop) Load(s *State, controller stagehand.SceneController[*State]
 		UsesLeft: 4,
 	}
 	s.Phase = state.StorePhase
-	s.EncounterNumber = 0
-	s.CurrentEncounter = s.ChosenStore.Encounters[0]
-	log.Printf("Populated Store: %+v", s.ChosenStore)
+	ss.toolBought = 0
 
 	s.ClearSelectedCards()
 	ss.BaseScene.Load(s, controller)
@@ -102,6 +102,8 @@ func (ss *storeShop) Draw(screen *ebiten.Image) {
 	components.NewCard(ss.nailCard, 300, 50).Draw(screen)
 	components.NewCard(ss.screwCard, 430, 50).Draw(screen)
 
+	components.NewIndicator("time-symbol", fmt.Sprintf("x %d", ss.State.TimeLeft), 400, 435).Draw(screen)
+
 	r := assets.Registry.DefaultTextRenderer(17)
 	r.SetAlign(etxt.Top, etxt.Right)
 	r.SetTarget(screen)
@@ -114,10 +116,10 @@ func (ss *storeShop) Draw(screen *ebiten.Image) {
 	
 	r.SetAlign(etxt.Bottom, etxt.Right)
 	r.SetColor(color.Black)
-	r.Draw(fmt.Sprintf("%d", ss.State.ChosenStore.PlankStock), 165, 245)
-	r.Draw(fmt.Sprintf("%d", ss.State.ChosenStore.BoardStock), 295, 245)
-	r.Draw(fmt.Sprintf("%d", ss.State.ChosenStore.NailStock),  425, 245)
-	r.Draw(fmt.Sprintf("%d", ss.State.ChosenStore.ScrewStock), 555, 245)
+	r.Draw(fmt.Sprintf("%d", ss.State.ChosenStore.PlankStock), 160, 240)
+	r.Draw(fmt.Sprintf("%d", ss.State.ChosenStore.BoardStock), 290, 240)
+	r.Draw(fmt.Sprintf("%d", ss.State.ChosenStore.NailStock),  420, 240)
+	r.Draw(fmt.Sprintf("%d", ss.State.ChosenStore.ScrewStock), 550, 240)
 
 	var tool *state.CardState
 	if ss.toolBought < 2 {

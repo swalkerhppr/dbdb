@@ -12,6 +12,10 @@ type HelperState struct {
 }
 
 func (s *GlobalState) DeployHelper(c *CardState) bool {
+	if s.IsExpertiseActive(ExpertiseGrifter) {
+		s.MoneyLeft += c.MoneyCost
+		s.DisableExpertise(ExpertiseGrifter)
+	}
 	if s.MoneyLeft < c.MoneyCost {
 		s.alert("Not enough money!")
 		return false

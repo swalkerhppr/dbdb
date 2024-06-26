@@ -83,6 +83,37 @@ var cardIDNames = map[CardID]string{
 	ExpertiseOptimizer  : "optimizer",
 }
 
+var cardIDDescriptions = map[CardID]string{
+	MaterialPlank : "plank",
+	MaterialBoard : "board",
+	MaterialScrew : "screw",
+	MaterialNail  : "nail",
+
+	HelperColo    : "Can hold cards for you",
+	HelperShop    : "Can hold cards for you",
+	HelperHood    : "Can hold cards for you",
+	HelperSass    : "Can hold cards for you",
+	HelperOarm    : "Can hold cards for you",
+	HelperGuru    : "Can hold cards for you",
+	HelperCurt    : "Can hold cards for you",
+
+	ToolHammer      : "hammer",
+	ToolSaw         : "saw",
+	ToolDrill       : "drill",
+	ToolGlue        : "glue",
+	ToolCircularSaw : "circular-saw",
+	ToolNailGun     : "nail-gun",
+
+	ExpertiseTradesman  : "Next nail/screw better",
+	ExpertiseBlacksmith : "Next tool use is free",
+	ExpertiseRoofer     : "Next hammer/nailgun takes less time",
+	ExpertiseLumberjack : "Next saw takes less time",
+	ExpertiseGrifter    : "Next helper is free",
+	ExpertiseDuplicator : "Next part counts as two",
+	ExpertiseWoodsman   : "Next plank/board is better",
+	ExpertiseOptimizer  : "Next part is free",
+}
+
 func RandomCardID() CardID {
 	t := rand.Intn(25)
 	i := 0
@@ -173,6 +204,14 @@ func RandomExpertiseIDs(num int) []CardID {
 	return picks
 }
 
+func (c CardID) RawName() string {
+	return cardIDNames[c]
+}
+
+func (c CardID) HelpDescription() string {
+	return cardIDDescriptions[c]
+}
+
 func (c CardID) AssetName() string {
 	if _, ok := cardIDNames[c]; !ok {
 		log.Printf("Could not determine card's asset name! %v", c)
@@ -206,14 +245,16 @@ func (c CardID) DisplayName() string {
 	return strings.Replace(name, "-", " ", 1)
 }
 
+func (c CardID) SymbolName() string {
+	return cardIDNames[c] + "-symbol"
+}
+
 func (c CardID) ToolQuality() MaterialOrToolQuality {
 	switch c {
-	case ToolHammer, ToolSaw:
+	case ToolHammer, ToolSaw, ToolGlue:
 		return OneStar
-	case ToolCircularSaw, ToolNailGun:
+	case ToolCircularSaw, ToolNailGun, ToolDrill:
 		return MaterialOrToolQuality(1 + rand.Intn(2))
-	case ToolGlue:
-		return OneStar
 	}
 	return OneStar
 }

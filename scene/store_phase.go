@@ -4,7 +4,6 @@ import (
 	"dbdb/components"
 	"dbdb/state"
 	"fmt"
-	"image/color"
 	"log"
 	"math/rand"
 	"time"
@@ -25,7 +24,7 @@ type storePhase struct {
 
 func CreateStorePhase(width, height int) stagehand.Scene[*State] {
 	sp := &storePhase{
-		BaseScene: NewBaseWithFill(width, height, color.White),
+		BaseScene: NewBaseWithBG(width, height, "store_phase.png"),
 	}
 	sp.playButton = components.NewButton("Play", 96, 445, func() {
 		if sp.State.PlaySelected() {
@@ -34,12 +33,12 @@ func CreateStorePhase(width, height int) stagehand.Scene[*State] {
 	})
 	sp.discardButton = components.NewButton("New Hand", 235, 445, func() {
 		if sp.State.DiscardHand() && sp.State.TimeLeft > 0 {
-			sp.State.TimeLeft--
+			sp.State.TimeLeft -= 2
 		}
 	})
 
-	sp.skipButton = components.NewButton("Skip (-2 Time)", 532, 445, func() {
-		sp.State.TimeLeft -= 2
+	sp.skipButton = components.NewButton("Skip (-3)", 532, 445, func() {
+		sp.State.TimeLeft -= 3
 		sp.nextEncounter()
 	})
 	sp.textBox = components.NewTextBox("", 19, 130, 32, 480, 96)
@@ -66,15 +65,15 @@ func (s *storePhase) Draw(screen *ebiten.Image) {
 		components.NewIndicator("helper-icon-grey", "", 379, 98).Draw(screen)
 	case state.HoleEncounter:
 		// plank or board type
-		s.textBox.SetText(encounterCounter + "You see a hole in the ground. Cover it?")
+		s.textBox.SetText(encounterCounter + "There is a hole in the ground. Cover it?")
 		s.textBox.Draw(screen)
-		components.NewIndicator("plank-icon-grey", "  OR", 328, 96).Draw(screen)
+		components.NewIndicator("plank-icon-grey", " OR", 328, 96).Draw(screen)
 		components.NewIndicator("board-icon-grey", "", 385, 96).Draw(screen)
 	case state.ShelfEncounter:
 		// fastener or nail type
-		s.textBox.SetText(encounterCounter + "A shelf is falling apart. Fix it with a nail or screw?")
+		s.textBox.SetText(encounterCounter + "A shelf is missing a part. Fix it?")
 		s.textBox.Draw(screen)
-		components.NewIndicator("nail-icon-grey", "  OR", 328, 96).Draw(screen)
+		components.NewIndicator("nail-icon-grey", " OR", 328, 96).Draw(screen)
 		components.NewIndicator("screw-icon-grey", "", 385, 96).Draw(screen)
 
 	}
@@ -89,7 +88,7 @@ func (s *storePhase) Draw(screen *ebiten.Image) {
 func (s *storePhase) nextEncounter() {
 	s.State.EncounterNumber++
 	if s.State.EncounterNumber == len(s.State.ChosenStore.Encounters) {
-		s.SceneManager.SwitchWithTransition(SceneMap[StoreShop], stagehand.NewDurationTimedSlideTransition[*State](stagehand.TopToBottom, time.Millisecond * 500))
+		s.SceneManager.SwitchWithTransition(SceneMap[StoreShop], stagehand.NewDurationTimedFadeTransition[*State](time.Millisecond * 100))
 
 	} else {
 		s.State.CurrentEncounter = s.State.ChosenStore.Encounters[s.State.EncounterNumber]
@@ -147,6 +146,7 @@ func (p *storePhase) Load(s *State, controller stagehand.SceneController[*State]
 	}
 
 	s.ClearSelectedCards()
+	s.ShuffleCards(0, 4)
 	p.BaseScene.Load(s, controller)
 }
 

@@ -1,6 +1,7 @@
 package state
 
 import (
+	"dbdb/assets"
 	"fmt"
 	"log"
 	"math/rand"
@@ -68,7 +69,7 @@ func (s *GlobalState) playStoreCard() bool {
 			prize := &CardState {
 				CardID:   card.CardID,
 				UsesLeft: 2 + int(s.ChosenStore.StoreQuality),
-				Quality:  s.ChosenStore.StoreQuality,
+				Quality:  card.CardID.ToolQuality(),
 			}
 			s.AddCard(prize)
 			s.alert(fmt.Sprintf("Maybe you'll like this brand\n(Received %s)", prize.CardID.DisplayName()))
@@ -99,13 +100,13 @@ func (s *GlobalState) playStoreCard() bool {
 				FavoriteTool: favTool,
 			}
 			s.AddCard(prize)
-			s.alert("Let me help you with that.\n(Received HELPER)")
+			s.alert("Looks like you need some help.\n(Received HELPER)")
 		} else if isTool && rollPrize >= 60 {
 			// Get another tool of the same type
 			prize := &CardState {
 				CardID:   card.CardID,
 				UsesLeft: rand.Intn(4),
-				Quality:  MaterialOrToolQuality(rand.Intn(1)),
+				Quality:  card.CardID.ToolQuality(),
 			}
 			s.AddCard(prize)
 			s.alert(fmt.Sprintf("You left this at my house.\n(Received %s)", prize.CardID.DisplayName()))
@@ -114,7 +115,7 @@ func (s *GlobalState) playStoreCard() bool {
 
 	case HoleEncounter:
 		rollPrize := rand.Intn(100)
-		if rollPrize > 55 { 
+		if rollPrize > 35 { 
 			prize := &CardState{
 				CardID: RandomExpertiseID(),
 			}
@@ -125,7 +126,7 @@ func (s *GlobalState) playStoreCard() bool {
 
 	case ShelfEncounter:
 		rollPrize := rand.Intn(100)
-		if rollPrize > 75 { 
+		if rollPrize > 55 { 
 			prize := &CardState{
 				CardID: RandomExpertiseID(),
 			}
@@ -154,7 +155,7 @@ func (s *GlobalState) playBuildCard() bool {
 				s.DestroyCard(card1)
 			}
 		case ExpertiseType:
-			// TODO Queue up special effect
+			s.ApplyExpertise(card1.CardID)
 			s.DiscardCard(card1)
 		default:
 			log.Println("Single card was unplayable")
@@ -176,13 +177,42 @@ func (s *GlobalState) playBuildCard() bool {
 		}
 	}
 
+	result := card1.Combine(allSelected[1:]...)
+
+	if s.IsExpertiseActive(ExpertiseWoodsman) {
+		// All combinations involve wood
+		totalTime--
+		s.DisableExpertise(ExpertiseWoodsman)
+	}
+
+	if s.IsExpertiseActive(ExpertiseTradesman) &&
+		(CardID(result) & MaterialNail != 0) ||
+		(CardID(result) & MaterialScrew != 0) {
+		// saw/glue don't use nail or screw
+		totalTime--
+		s.DisableExpertise(ExpertiseTradesman)
+	}
+
+	if s.IsExpertiseActive(ExpertiseRoofer) &&
+		(CardID(result) & ToolHammer != 0) ||
+		(CardID(result) & ToolNailGun != 0) {
+		totalTime--
+		s.DisableExpertise(ExpertiseRoofer)
+	}
+
+	if s.IsExpertiseActive(ExpertiseLumberjack) &&
+		(CardID(result) & ToolSaw != 0) ||
+		(CardID(result) & ToolCircularSaw != 0) {
+		totalTime--
+		s.DisableExpertise(ExpertiseRoofer)
+	}
+
 	if totalTime > s.TimeLeft {
 		s.alert("You don't have enough time!")
 		return false
 	}
 
-
-	switch card1.Combine(allSelected[1:]...){
+	switch result {
 	case PlankNailHammer, PlankNailNailGun, PlankScrewDrill:
 		if s.PlankPartsBuilt >= s.RequiredPlankParts {
 			s.alert("You don't need anymore PLANK parts!")
@@ -191,8 +221,12 @@ func (s *GlobalState) playBuildCard() bool {
 		s.PlankPartsBuilt++
 		s.alert(fmt.Sprintf("Deck PLANK part built!(%d/%d)", s.PlankPartsBuilt, s.RequiredPlankParts))
 	case BoardNailHammer, BoardNailNailGun, BoardScrewDrill:
-		if s.PlankPartsBuilt >= s.RequiredPlankParts {
-			s.alert("You don't need anymore BOARD part!")
+		if s.BoardPartsBuilt >= s.RequiredBoardParts {
+			s.alert("You don't need anymore BOARD parts!")
+			return false
+		}
+		if s.PlankPartsBuilt < s.BoardPartsBuilt {
+			s.alert("You need to build a PLANK part first!")
 			return false
 		}
 		s.BoardPartsBuilt++
@@ -226,6 +260,21 @@ func (s *GlobalState) playBuildCard() bool {
 		s.alert("Got a BOARD")
 	}
 
+	switch result {
+	case PlankNailHammer, BoardNailHammer:
+		assets.Registry.Sound("hammer.ogg").Play()
+	case PlankNailNailGun, BoardNailNailGun:
+		assets.Registry.Sound("nailgun.ogg").Play()
+	case PlankScrewDrill, BoardScrewDrill:
+		assets.Registry.Sound("drill.ogg").Play()
+	case BoardSaw:
+		assets.Registry.Sound("saw.ogg").Play()
+	case BoardCircularSaw:
+		assets.Registry.Sound("circular-saw.ogg").Play()
+	case PlankGlue:
+		assets.Registry.Sound("glue.ogg").Play()
+	}
+
 	// All used materials are destroyed and all tools take a use
 	for _, c := range allSelected {
 		switch c.CardID.CardType() {
@@ -234,12 +283,20 @@ func (s *GlobalState) playBuildCard() bool {
 			s.DestroyCard(c)
 		case ToolType:
 			c.UsesLeft--
+			if s.IsExpertiseActive(ExpertiseBlacksmith) {
+				c.UsesLeft++
+				s.DisableExpertise(ExpertiseBlacksmith)
+			}
 			s.ReleaseCard(c)
 			s.DiscardCard(c)
 		}
 	}
 
 	s.TimeLeft -= totalTime
+	if s.IsExpertiseActive(ExpertiseOptimizer) {
+		s.TimeLeft += totalTime
+		s.DisableExpertise(ExpertiseOptimizer)
+	}
 
 	if s.RequiredBoardParts == s.BoardPartsBuilt && s.RequiredPlankParts == s.PlankPartsBuilt {
 		s.GameWon = true

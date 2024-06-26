@@ -78,13 +78,13 @@ func (d *DeckIndicators) Draw(screen *ebiten.Image) {
 	col = 0
 	row = 0
 	for _, key := range keys {
-		l := d.left + (40 * col)
+		l := d.left + (45 * col)
 		t := d.top + (40 * row)
 		if IsMouseover(l, t, 32, 32, false) && d.sellable {
 			if rclicked {
 				d.globalState.SellCardWithID(key)
 			} else {
-				NewTextBox("RClick: Sell", 16, l + 32, t - 13, 96, 50).Draw(screen)
+				NewTextBox("RClick: Sell", 16, l + 32, t - 13, 128, 50).Draw(screen)
 			}
 		}
 		col++

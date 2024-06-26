@@ -18,6 +18,7 @@ type GlobalState struct {
 	Phase     GamePhase
 	MoneyLeft float32
 	Day       int
+	MaxDays   int
 	TimeLeft  int
 	GameWon   bool
 	
@@ -41,6 +42,8 @@ type GlobalState struct {
 	Deck []*CardState
 	HeldCards []*CardState
 
+	ActiveExpertise CardID
+
 	handStartIdx int
 	topCardIdx int
 
@@ -49,22 +52,48 @@ type GlobalState struct {
 
 func InitialState() *GlobalState {
 	return &GlobalState{
-		Deck : []*CardState{
-			{ CardID : MaterialBoard, Quality: TwoStar  },
-			{ CardID : MaterialBoard, Quality: TwoStar  },
-			{ CardID : MaterialPlank, Quality: TwoStar  },
-			{ CardID : MaterialPlank, Quality: TwoStar  },
-			{ CardID : MaterialNail,  Quality: TwoStar },
-			{ CardID : MaterialNail,  Quality: TwoStar },
-			{ CardID : MaterialNail,  Quality: TwoStar },
-			{ CardID : ToolHammer,    Quality: TwoStar, UsesLeft: 4 },
-			{ CardID : ToolSaw,       Quality: TwoStar, UsesLeft: 4 },
-			{ CardID : HelperGuru,    MoneyCost : 150, FavoriteTool: ToolHammer },
-		},
 		TimeLeft: 24,
 		RequiredPlankParts: 5,
 		RequiredBoardParts: 5,
-		MoneyLeft: 1000,
+		handStartIdx: 0,
+		topCardIdx: 5,
 		selectedCards : make([]*CardState, 0, 5),
 	}
+}
+
+func InitialDeck(difficulty int) []*CardState {
+	switch difficulty {
+	case 0: //Easy
+		return []*CardState{
+			{ CardID : MaterialBoard, Quality: ThreeStar  },
+			{ CardID : MaterialBoard, Quality: TwoStar  },
+			{ CardID : MaterialPlank, Quality: ThreeStar  },
+			{ CardID : MaterialNail,  Quality: ThreeStar },
+			{ CardID : MaterialNail,  Quality: TwoStar },
+			{ CardID : ToolHammer,    Quality: OneStar, UsesLeft: 4 },
+			{ CardID : ToolSaw,       Quality: OneStar, UsesLeft: 4 },
+			{ CardID : HelperGuru,    MoneyCost : 150, FavoriteTool: ToolHammer },
+			{ CardID : ExpertiseTradesman },
+		}
+	case 1: // Normal
+		return []*CardState{
+			{ CardID : MaterialBoard, Quality: TwoStar  },
+			{ CardID : MaterialPlank, Quality: TwoStar  },
+			{ CardID : MaterialNail,  Quality: TwoStar },
+			{ CardID : MaterialNail,  Quality: TwoStar },
+			{ CardID : ToolHammer,    Quality: OneStar, UsesLeft: 4 },
+			{ CardID : ToolSaw,       Quality: OneStar, UsesLeft: 4 },
+			{ CardID : HelperGuru,    MoneyCost : 150, FavoriteTool: ToolHammer },
+		}
+	case 2: // Hard
+		return []*CardState{
+			{ CardID : MaterialBoard, Quality: TwoStar  },
+			{ CardID : MaterialBoard, Quality: TwoStar  },
+			{ CardID : MaterialPlank, Quality: TwoStar  },
+			{ CardID : MaterialNail,  Quality: TwoStar },
+			{ CardID : ToolHammer,    Quality: OneStar, UsesLeft: 4 },
+			{ CardID : ToolSaw,       Quality: OneStar, UsesLeft: 4 },
+		}
+	}
+	return nil
 }

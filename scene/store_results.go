@@ -22,7 +22,7 @@ func CreateStoreResults(width, height int) stagehand.Scene[*State] {
 	}
 
 	sr.continueButton = components.NewButton("To the deck...", 320, 272, func() {
-		sr.SceneManager.SwitchWithTransition(SceneMap[BuildingPhase], stagehand.NewDurationTimedSlideTransition[*State](stagehand.RightToLeft, time.Millisecond * 500))
+		sr.SceneManager.SwitchWithTransition(SceneMap[BuildingPhase], stagehand.NewDurationTimedFadeTransition[*State](time.Millisecond * 100))
 	})
 	return sr
 }

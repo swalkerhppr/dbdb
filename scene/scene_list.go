@@ -12,6 +12,7 @@ const (
 	StoreResults
 	BuildingPhase
 	DayResults
+	GameResults
 )
 
 var SceneMap map[SceneID]stagehand.Scene[*State]
@@ -25,5 +26,6 @@ func InitializeScenes(width, height int) {
 		StoreResults   : CreateStoreResults(width, height),
 		BuildingPhase  : CreateBuildingPhase(width, height),
 		DayResults     : CreateDayResults(width, height),
+		GameResults    : CreateGameResults(width, height),
 	}
 }
