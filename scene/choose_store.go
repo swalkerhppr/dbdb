@@ -23,9 +23,20 @@ func CreateChooseStore(width, height int) stagehand.Scene[*State] {
 		BaseScene: NewBaseWithBG(width, height, "store_choice.png"),
 		textBox: components.NewTextBox("Choose a store to buy supplies", 17, 178, 94, 320, 48),
 	}
+	return cs
+}
 
+func (s *chooseStore) Draw(screen *ebiten.Image) {
+	s.BaseScene.DrawScene(screen)
+	s.choice1.Draw(screen)
+	s.choice2.Draw(screen)
+	s.choice3.Draw(screen)
+	s.textBox.Draw(screen)
+}
+
+func (cs *chooseStore) Load(s *State, controller stagehand.SceneController[*State]) {
 	textOne := components.NewTextBox("Grade: C\nPrice: $\nTime: Low", 17, 112, 250, 96, 64)
-	cs.choice1 = components.NewPopoverArea(128, 180, 64, 64, textOne, func() {
+	cs.choice1 = components.NewPopoverArea(128, 180, 64, 64, textOne, &s.Controls, func() {
 		cs.BaseScene.State.ChosenStore = state.StoreData{
 			StoreQuality: state.OneStar,
 			BoardPrice:   50.0,
@@ -41,7 +52,7 @@ func CreateChooseStore(width, height int) stagehand.Scene[*State] {
 	})
 
 	textTwo := components.NewTextBox("Grade: B\nPrice: $$\nTime: Mid", 17, 272, 250, 96, 64)
-	cs.choice2 = components.NewPopoverArea(288, 180, 64, 64, textTwo, func() {
+	cs.choice2 = components.NewPopoverArea(288, 180, 64, 64, textTwo, &s.Controls, func() {
 		cs.BaseScene.State.ChosenStore = state.StoreData{
 			StoreQuality: state.TwoStar,
 			BoardPrice:   75.0,
@@ -57,7 +68,7 @@ func CreateChooseStore(width, height int) stagehand.Scene[*State] {
 	})
 
 	textThree := components.NewTextBox("Grade: A\nPrice: $$$\nTime: High", 17, 432, 250, 96, 64)
-	cs.choice3 = components.NewPopoverArea(448, 180, 64, 64, textThree, func() {
+	cs.choice3 = components.NewPopoverArea(448, 180, 64, 64, textThree, &s.Controls, func() {
 		cs.BaseScene.State.ChosenStore = state.StoreData{
 			StoreQuality: state.ThreeStar,
 			BoardPrice:   100.0,
@@ -71,20 +82,6 @@ func CreateChooseStore(width, height int) stagehand.Scene[*State] {
 		}
 		cs.SceneManager.SwitchWithTransition(SceneMap[StorePhase], stagehand.NewDurationTimedFadeTransition[*State](time.Millisecond * 100))
 	})
-
-
-	return cs
-}
-
-func (s *chooseStore) Draw(screen *ebiten.Image) {
-	s.BaseScene.DrawScene(screen)
-	s.choice1.Draw(screen)
-	s.choice2.Draw(screen)
-	s.choice3.Draw(screen)
-	s.textBox.Draw(screen)
-}
-
-func (b *chooseStore) Load(s *State, controller stagehand.SceneController[*State]) {
 	s.TimeLeft = 24
-	b.BaseScene.Load(s, controller)
+	cs.BaseScene.Load(s, controller)
 }

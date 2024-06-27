@@ -35,6 +35,7 @@ func (e *ExpertiseIndicators) Draw(screen *ebiten.Image) {
 		if e.s.ActiveExpertise & i != 0 {
 			NewPopoverArea(10 + (col * 32), 64 + (row * 32), 32, 32,
 				NewTextBox(i.HelpDescription(), 15, 42 + (col *32), 80 + (row * 32), 288, 50),
+				&e.s.Controls,
 				nil,
 			).Draw(screen)
 		}

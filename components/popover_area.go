@@ -1,15 +1,16 @@
 package components
 
 import (
+	"dbdb/state"
+
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 type Drawer interface {
 	Draw(*ebiten.Image)
 }
 
-func NewPopoverArea(left, top, width, height int, img Drawer, click func()) *PopoverArea {
+func NewPopoverArea(left, top, width, height int, img Drawer, c *state.ControlHandler, click func()) *PopoverArea {
 	return &PopoverArea{
 		top: top,
 		left: left,
@@ -17,6 +18,7 @@ func NewPopoverArea(left, top, width, height int, img Drawer, click func()) *Pop
 		height: height,
 		popImage: img,
 		onClick: click,
+		ControlHandler: c,
 	}
 }
 
@@ -31,7 +33,7 @@ type PopoverArea struct {
 	onClick func()
 
 	showImg bool
-	pressed bool
+	*state.ControlHandler
 }
 
 func (p *PopoverArea) Draw(screen *ebiten.Image) {
@@ -39,10 +41,7 @@ func (p *PopoverArea) Draw(screen *ebiten.Image) {
 		if !p.showImg {
 			p.showImg = true
 		}
-		if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
-			p.pressed = true
-		}
-		if p.pressed && inpututil.IsMouseButtonJustReleased(ebiten.MouseButton0) && p.onClick != nil {
+		if p.LeftClick && p.onClick != nil {
 			p.onClick()
 		}
 	} else if p.showImg {

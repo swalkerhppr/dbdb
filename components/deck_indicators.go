@@ -7,7 +7,6 @@ import (
 	"slices"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 type DeckIndicators struct{
@@ -16,6 +15,7 @@ type DeckIndicators struct{
 	top  int
 	cols int
 	sellable bool
+	*state.ControlHandler
 }
 
 func NewDeckIndicators(s *state.GlobalState, cols, left, top int) *DeckIndicators {
@@ -25,6 +25,7 @@ func NewDeckIndicators(s *state.GlobalState, cols, left, top int) *DeckIndicator
 		top         : top,
 		cols        : cols,
 		sellable   : false,
+		ControlHandler: &s.Controls,
 	}
 }
 
@@ -35,11 +36,11 @@ func NewShopDeckIndicators(s *state.GlobalState, cols, left, top int) *DeckIndic
 		top         : top,
 		cols        : cols,
 		sellable    : true,
+		ControlHandler: &s.Controls,
 	}
 }
 
 func (d *DeckIndicators) Draw(screen *ebiten.Image) {
-	rclicked := inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonRight)
 	var textColor color.Color = color.Black
 
 	iconCountMap := make(map[state.CardID]int)
@@ -81,7 +82,7 @@ func (d *DeckIndicators) Draw(screen *ebiten.Image) {
 		l := d.left + (45 * col)
 		t := d.top + (40 * row)
 		if IsMouseover(l, t, 32, 32, false) && d.sellable {
-			if rclicked {
+			if d.RightClick {
 				d.globalState.SellCardWithID(key)
 			} else {
 				NewTextBox("RClick: Sell", 16, l + 32, t - 13, 128, 50).Draw(screen)

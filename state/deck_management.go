@@ -136,23 +136,26 @@ func (s *GlobalState) GetHand() []*CardState {
 // Discards the current hand and draws a new hand. Shuffles if necessary
 // Returns true if we had to shuffle
 func (s *GlobalState) DiscardHand() bool {
-	shuffled := false
 	log.Printf("Discarding hand: %d-%d", s.handStartIdx, s.topCardIdx)
+
+	shuffled := false
 	s.handStartIdx += 5
 	s.topCardIdx = s.handStartIdx + 5
+
 	if s.topCardIdx > len(s.Deck) && len(s.Deck) > 5 {
 		log.Printf("Shuffling: %d-%d", s.handStartIdx, s.topCardIdx)
 		if s.handStartIdx >= len(s.Deck) {
 			s.handStartIdx = len(s.Deck)
-			s.topCardIdx = len(s.Deck)
 		}
 		s.ShuffleCards(len(s.Deck) - s.handStartIdx, 4)
 		shuffled = true
 	}
+
 	if len(s.Deck) <= 5 {
 		s.handStartIdx = 0
 		s.topCardIdx = len(s.Deck)
 	}
+
 	log.Printf("New hand: %d-%d", s.handStartIdx, s.topCardIdx)
 	s.ClearSelectedCards()
 	assets.Registry.Sound("dealcards.ogg").Play()
@@ -166,14 +169,13 @@ func (s *GlobalState) AddCard(card *CardState) {
 
 // Removes a card from the deck. does not remove the card if it doesn't exist
 func (s *GlobalState) DestroyCard(card *CardState) {
-	log.Printf("Deck pre-destroy: %+v", s.Deck)
+	log.Printf("Destroying: %+v", card)
 	for i, c := range s.Deck {
 		if c == card {
-			s.Deck = slices.Delete(s.Deck, i, i+1)
-			if len(s.Deck) > s.topCardIdx {
-				s.ShuffleCards(0, 4)
+			if s.topCardIdx >= len(s.Deck) {
+				s.topCardIdx = len(s.Deck) - 2
 			}
-			log.Printf("Deck post-destroy: %+v", s.Deck)
+			s.Deck = slices.Delete(s.Deck, i, i+1)
 			return
 		}
 	}
@@ -200,12 +202,15 @@ func (s *GlobalState) DiscardCard(card *CardState) bool {
 func (s *GlobalState) DrawCard() bool {
 	// Draw a card
 	s.handStartIdx++
-	s.topCardIdx++
+	//s.topCardIdx++
+	if s.handStartIdx == s.topCardIdx {
+		return s.DiscardHand()
+	} 
 	assets.Registry.Sound("singlecard.ogg").Play()
-	if s.topCardIdx > len(s.Deck) {
-		s.ShuffleCards(4, 4)
-		return true
-	}
+	//if s.topCardIdx > len(s.Deck) {
+	//	s.ShuffleCards(4, 4)
+	//	return true
+	//}
 	return false
 }
 
@@ -227,19 +232,20 @@ func (s *GlobalState) ShuffleCards(rem, numShuffles int) {
 	for range numShuffles {
 		leftIdx := rem
 		rightIdx := len(s.Deck) - 1
-		if leftIdx >= rightIdx {
-			break
-		}
-		for i := range len(s.Deck) {
-			hold := s.Deck[i]
+		for i := range len(s.Deck) - rem {
+			if leftIdx >= rightIdx {
+				break
+			}
+
+			hold := s.Deck[i + rem]
 			if rand.Int() % 2 == 0 {
-				s.Deck[i] = s.Deck[leftIdx]
+				s.Deck[i + rem] = s.Deck[leftIdx]
 				s.Deck[leftIdx] = hold
 				if leftIdx < len(s.Deck) - 1 {
 					leftIdx++
 				}
 			} else {
-				s.Deck[i] = s.Deck[rightIdx]
+				s.Deck[i + rem] = s.Deck[rightIdx]
 				s.Deck[rightIdx] = hold
 				if rightIdx > 0 {
 					rightIdx--

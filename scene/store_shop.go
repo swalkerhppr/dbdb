@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/joelschutz/stagehand"
 	"github.com/tinne26/etxt"
 )
@@ -31,12 +30,15 @@ func CreateStoreShop(width, height int) stagehand.Scene[*State] {
 	ss := &storeShop{
 		BaseScene: NewBaseWithBG(width, height, "store_shop.png"), 
 	}
-	ss.AdjustAlertPosition(230, 250)
 
-	ss.continueButton = components.NewButton("Get Building!", 483, 320, func() {
+	return ss
+}
+
+func (ss *storeShop) Load(s *State, controller stagehand.SceneController[*State]) {
+	ss.continueButton = components.NewButton("Get Building!", 483, 320, &s.Controls, func() {
 		ss.SceneManager.SwitchWithTransition(SceneMap[BuildingPhase], stagehand.NewDurationTimedFadeTransition[*State](time.Millisecond * 100))
 	})
-	ss.repairButton = components.NewButton("Repair Tools", 483, 360, func() {
+	ss.repairButton = components.NewButton("Repair Tools", 483, 360, &s.Controls, func() {
 		for _, c := range ss.State.Deck {
 			if c.CardID.IsTool() && c.UsesLeft < 4 {
 				total := float32(4 - c.UsesLeft) * 25
@@ -52,10 +54,7 @@ func CreateStoreShop(width, height int) stagehand.Scene[*State] {
 			}
 		}
 	})
-	return ss
-}
 
-func (ss *storeShop) Load(s *State, controller stagehand.SceneController[*State]) {
 	ss.plankCard = &state.CardState{
 		CardID:       state.MaterialPlank,
 		Quality:      s.ChosenStore.StoreQuality,
@@ -90,7 +89,9 @@ func (ss *storeShop) Load(s *State, controller stagehand.SceneController[*State]
 
 	s.ClearSelectedCards()
 	ss.BaseScene.Load(s, controller)
+	ss.AdjustAlertPosition(230, 250)
 }
+
 func (ss *storeShop) Draw(screen *ebiten.Image) {
 	moneyGreen := color.RGBA{0, 200, 50, 255}
 	ss.DrawScene(screen)
@@ -141,7 +142,7 @@ func (ss *storeShop) Draw(screen *ebiten.Image) {
 
 	components.NewShopDeckIndicators(ss.State, 4, 235, 300).Draw(screen)
 
-	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButton0) {
+	if ss.continueButton.LeftClick {
 		if components.IsMouseover(40, 50, 128, 198, false) {
 			ss.State.ChosenStore.PlankStock = ss.State.BuyCard(ss.plankCard, ss.State.ChosenStore.PlankPrice, ss.State.ChosenStore.PlankStock)
 		} else if components.IsMouseover(170, 50, 128, 198, false) {

@@ -5,7 +5,6 @@ import (
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 var (
@@ -17,11 +16,13 @@ var (
 func NewCardHand(s *state.GlobalState) *CardHand {
 	return &CardHand{
 		state : s,
+		ControlHandler: &s.Controls,
 	}
 }
 
 type CardHand struct {
 	state *state.GlobalState
+	*state.ControlHandler
 }
 
 func (h *CardHand) Draw(screen *ebiten.Image) {
@@ -31,13 +32,12 @@ func (h *CardHand) Draw(screen *ebiten.Image) {
 		cards[i] = NewCard(hand[i], 32 + ( i * 110 ), 230)
 	}
 
-	clicked := inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0)
 	cardOver := -1
 
 	for i := range cards {
 		if IsMouseover(cards[i].left, cards[i].top, 128, 192, false) {
 			cardOver = i
-			if clicked {
+			if h.LeftClick {
 				h.state.ToggleSelectCard(i)
 			}
 			break
@@ -63,5 +63,17 @@ func (h *CardHand) Draw(screen *ebiten.Image) {
 	}
 	if cardOver != -1 {
 		cards[cardOver].Draw(screen)
+	}
+	switch {
+	case h.Key1:
+		h.state.ToggleSelectCard(0)
+	case h.Key2:
+		h.state.ToggleSelectCard(1)
+	case h.Key3:
+		h.state.ToggleSelectCard(2)
+	case h.Key4:
+		h.state.ToggleSelectCard(3)
+	case h.Key5:
+		h.state.ToggleSelectCard(4)
 	}
 }

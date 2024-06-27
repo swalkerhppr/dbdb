@@ -2,14 +2,14 @@ package components
 
 import (
 	"dbdb/assets"
+	"dbdb/state"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/tinne26/etxt"
 	"github.com/yohamta/ganim8/v2"
 )
 
-func NewButton(text string, x, y int, click func()) *Button {
+func NewButton(text string, x, y int, c *state.ControlHandler, click func()) *Button {
 	r := assets.Registry.DefaultTextRenderer(18)
 	r.SetAlign(etxt.YCenter, etxt.XCenter)
 	return &Button{
@@ -20,6 +20,7 @@ func NewButton(text string, x, y int, click func()) *Button {
 		centerY : y,
 		text    : text,
 		OnClick : click,
+		ControlHandler: c,
 	}
 }
 
@@ -29,29 +30,25 @@ type Button struct {
 	sprite       *ganim8.Sprite
 	centerX      int
 	centerY      int
-	pressed      bool
 	OnClick      func()
+	*state.ControlHandler
+}
+
+func (b *Button) SetText(txt string) {
+	b.text = txt
 }
 
 func (b *Button) Draw(screen *ebiten.Image) {
 	b.textRenderer.SetTarget(screen)
-	clicked := inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0)
-	released := inpututil.IsMouseButtonJustReleased(ebiten.MouseButton0)
 	frameIdx := 1
 
 	if IsMouseover(b.centerX, b.centerY, b.sprite.W(), b.sprite.H(), true) {
 		frameIdx = 0
-		if clicked {
-			b.pressed = true
-		}
-		if released && b.pressed && b.OnClick != nil {
+		if b.LeftClick || b.RightClick && b.OnClick != nil {
 			b.OnClick()
 		}
 	}
-	if released {
-		b.pressed = false
-	}
-	if b.pressed {
+	if b.LeftPress || b.RightClick {
 		frameIdx = 2
 	}
 

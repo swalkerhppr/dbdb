@@ -186,23 +186,23 @@ func (s *GlobalState) playBuildCard() bool {
 	}
 
 	if s.IsExpertiseActive(ExpertiseTradesman) &&
-		(CardID(result) & MaterialNail != 0) ||
-		(CardID(result) & MaterialScrew != 0) {
+		( (CardID(result) & MaterialNail != 0) ||
+		  (CardID(result) & MaterialScrew != 0) ) {
 		// saw/glue don't use nail or screw
 		totalTime--
 		s.DisableExpertise(ExpertiseTradesman)
 	}
 
 	if s.IsExpertiseActive(ExpertiseRoofer) &&
-		(CardID(result) & ToolHammer != 0) ||
-		(CardID(result) & ToolNailGun != 0) {
+		( (CardID(result) & ToolHammer != 0) ||
+		  (CardID(result) & ToolNailGun != 0) ){
 		totalTime--
 		s.DisableExpertise(ExpertiseRoofer)
 	}
 
 	if s.IsExpertiseActive(ExpertiseLumberjack) &&
-		(CardID(result) & ToolSaw != 0) ||
-		(CardID(result) & ToolCircularSaw != 0) {
+		( (CardID(result) & ToolSaw != 0) ||
+			(CardID(result) & ToolCircularSaw != 0) ) {
 		totalTime--
 		s.DisableExpertise(ExpertiseRoofer)
 	}

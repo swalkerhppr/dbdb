@@ -25,13 +25,13 @@ func CreateGameResults(width, height int) stagehand.Scene[*State] {
 		won : true,
 	}
 
-	gr.mainMenuButton = components.NewButton("Main Menu", 320, 436, func() {
-		gr.SceneManager.SwitchWithTransition(SceneMap[MainMenu], stagehand.NewDurationTimedFadeTransition[*State](time.Millisecond * 100))
-	})
 	return gr
 }
 
 func (gr *gameResults) Load(s *State, controller stagehand.SceneController[*State]) {
+	gr.mainMenuButton = components.NewButton("Main Menu", 320, 436, &s.Controls, func() {
+		gr.SceneManager.SwitchWithTransition(SceneMap[MainMenu], stagehand.NewDurationTimedFadeTransition[*State](time.Millisecond * 100))
+	})
 	gr.won = s.RequiredBoardParts == s.BoardPartsBuilt && s.RequiredPlankParts == s.PlankPartsBuilt
 	gr.scoreText = createScoreText(s)
 	gr.score = (s.PlankPartsBuilt + s.BoardPartsBuilt) * 1000 - (s.Day * 500) + int(s.MoneyLeft) - (len(s.Deck) * 10)

@@ -20,14 +20,13 @@ func CreateDayResults(width, height int) stagehand.Scene[*State] {
 	gr := &dayResults{
 		BaseScene: NewBaseWithFill(width, height, color.RGBA{R: 0x73, G: 0x7b, B: 0x9a, A: 0xFF}), 
 	}
-
-	gr.continueButton = components.NewButton("Back to it", 320, 404, func() {
-		gr.SceneManager.SwitchWithTransition(SceneMap[ChooseStore], stagehand.NewDurationTimedFadeTransition[*State](time.Millisecond * 100))
-	})
 	return gr
 }
 
 func (gr *dayResults) Load(s *State, controller stagehand.SceneController[*State]) {
+	gr.continueButton = components.NewButton("Back to it", 320, 404, &s.Controls, func() {
+		gr.SceneManager.SwitchWithTransition(SceneMap[ChooseStore], stagehand.NewDurationTimedFadeTransition[*State](time.Millisecond * 100))
+	})
 	gr.scoreText = createScoreText(s)
 	gr.BaseScene.Load(s, controller)
 }

@@ -26,21 +26,6 @@ func CreateStorePhase(width, height int) stagehand.Scene[*State] {
 	sp := &storePhase{
 		BaseScene: NewBaseWithBG(width, height, "store_phase.png"),
 	}
-	sp.playButton = components.NewButton("Play", 96, 445, func() {
-		if sp.State.PlaySelected() {
-			sp.nextEncounter()
-		} 
-	})
-	sp.discardButton = components.NewButton("New Hand", 235, 445, func() {
-		if sp.State.DiscardHand() && sp.State.TimeLeft > 0 {
-			sp.State.TimeLeft -= 2
-		}
-	})
-
-	sp.skipButton = components.NewButton("Skip (-3)", 532, 445, func() {
-		sp.State.TimeLeft -= 3
-		sp.nextEncounter()
-	})
 	sp.textBox = components.NewTextBox("", 19, 130, 32, 480, 96)
 	return sp
 }
@@ -83,6 +68,16 @@ func (s *storePhase) Draw(screen *ebiten.Image) {
 	s.skipButton.Draw(screen)
 
 	s.DrawIndicators(screen)
+
+	if s.State.Controls.KeyEnter {
+		s.skipButton.OnClick()
+	}
+	if s.State.Controls.KeyTab {
+		s.discardButton.OnClick()
+	}
+	if s.State.Controls.KeySpace {
+		s.playButton.OnClick()
+	}
 }
 
 func (s *storePhase) nextEncounter() {
@@ -105,6 +100,22 @@ func (s *storePhase) nextEncounter() {
 }
 
 func (p *storePhase) Load(s *State, controller stagehand.SceneController[*State]) {
+	p.playButton = components.NewButton("Play", 96, 445, &s.Controls, func() {
+		if s.PlaySelected() {
+			p.nextEncounter()
+		} 
+	})
+	p.discardButton = components.NewButton("New Hand", 235, 445, &s.Controls, func() {
+		if s.DiscardHand() && s.TimeLeft > 0 {
+			s.TimeLeft -= 2
+		}
+	})
+
+	p.skipButton = components.NewButton("Skip", 532, 445, &s.Controls, func() {
+		s.TimeLeft -= 1 + int(s.ChosenStore.StoreQuality)
+		p.nextEncounter()
+	})
+
 	// Generate random encounters
 	numEncounters := 0
 	switch s.ChosenStore.StoreQuality {
@@ -148,5 +159,6 @@ func (p *storePhase) Load(s *State, controller stagehand.SceneController[*State]
 	s.ClearSelectedCards()
 	s.ShuffleCards(0, 4)
 	p.BaseScene.Load(s, controller)
+	p.skipButton.SetText(fmt.Sprintf("Skip (-%d)", 1 + s.ChosenStore.StoreQuality))
 }
 

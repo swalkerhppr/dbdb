@@ -21,9 +21,6 @@ func CreateStoreResults(width, height int) stagehand.Scene[*State] {
 		BaseScene: NewBaseWithFill(width, height, color.Black), 
 	}
 
-	sr.continueButton = components.NewButton("To the deck...", 320, 272, func() {
-		sr.SceneManager.SwitchWithTransition(SceneMap[BuildingPhase], stagehand.NewDurationTimedFadeTransition[*State](time.Millisecond * 100))
-	})
 	return sr
 }
 
@@ -32,4 +29,10 @@ func (ss *storeResults) Draw(screen *ebiten.Image) {
 	ss.DrawScene(screen)
 	ss.continueButton.Draw(screen)
 	ss.DrawIndicators(screen)
+}
+
+func (sr *storeResults) Load(s *State, controller stagehand.SceneController[*State]) {
+	sr.continueButton = components.NewButton("To the deck...", 320, 272, &s.Controls, func() {
+		sr.SceneManager.SwitchWithTransition(SceneMap[BuildingPhase], stagehand.NewDurationTimedFadeTransition[*State](time.Millisecond * 100))
+	})
 }

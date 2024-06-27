@@ -32,7 +32,6 @@ func NewBaseWithBG(width, height int, bgName string) *BaseScene {
 	return &BaseScene{
 		Background : assets.Registry.Image(bgName),
 		Opts       : ScaleOpts(),
-		Alert      : components.NewAlert(),
 	}
 }
 
@@ -42,7 +41,6 @@ func NewBaseWithFill(width, height int, color color.Color) *BaseScene {
 	return &BaseScene{
 		Background : bg,
 		Opts       : ScaleOpts(),
-		Alert      : components.NewAlert(),
 	}
 }
 
@@ -89,6 +87,7 @@ func (b *BaseScene) Layout(outsideWidth, outsideHeight int) (int, int) {
 func (b *BaseScene) Load(s *State, controller stagehand.SceneController[*State]) {
 	log.Printf("Loading State: %+v", s)
 	b.State = s
+	b.Alert = components.NewAlert(&s.Controls)
 	b.SceneManager = controller.(*stagehand.SceneManager[*State])
 }
 
@@ -99,5 +98,6 @@ func (b *BaseScene) Unload() *State {
 
 // Update implements stagehand.Scene.
 func (b *BaseScene) Update() error {
+	b.State.Controls.Update()
 	return b.Stop
 }

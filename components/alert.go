@@ -1,19 +1,22 @@
 package components
 
 import (
+	"dbdb/state"
+
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 
 type Alert struct {
 	box TextBox
 	render bool
+	*state.ControlHandler
 }
 
-func NewAlert() *Alert {
+func NewAlert(c *state.ControlHandler) *Alert {
 	return &Alert{
 		box: *NewTextBox("Enter Text Here!", 16, 180, 185, 320, 42),
+		ControlHandler: c,
 	}
 }
 
@@ -31,9 +34,8 @@ func (a *Alert) SetPosition(left, top int) {
 }
 
 func (a *Alert) Draw(screen *ebiten.Image) {
-	click := inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0)
 	if a.render {
-		if click {
+		if a.Any {
 			a.render = false
 		} else {
 			a.box.Draw(screen)

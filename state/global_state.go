@@ -43,6 +43,7 @@ type GlobalState struct {
 	HeldCards []*CardState
 
 	ActiveExpertise CardID
+	Controls ControlHandler
 
 	handStartIdx int
 	topCardIdx int
