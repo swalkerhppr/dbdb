@@ -3,6 +3,7 @@ package scene
 import (
 	"dbdb/components"
 	"dbdb/state"
+	"image/color"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -27,6 +28,7 @@ func CreateBuildingPhase(width, height int) stagehand.Scene[*State] {
 }
 
 func (s *buildingPhase) Draw(screen *ebiten.Image) {
+
 	if s.State.CardsLeftInDeck() < 5 {
 		s.discardButton.SetText("New Hand (-2)")
 	} else {
@@ -34,6 +36,19 @@ func (s *buildingPhase) Draw(screen *ebiten.Image) {
 	}
 
 	s.DrawScene(screen)
+
+	if s.State.Controls.Inactive && s.State.NoPlay && time.Now().Second() % 2 == 0{
+		hlDiscard := ebiten.NewImage(130, 35)
+		hlDiscard.Fill(color.RGBA{200, 205, 0, 200})
+		opts := &ebiten.DrawImageOptions{}
+		if s.State.TimeLeft > 2 {
+			opts.GeoM.Translate(170, 427)
+		} else {
+			opts.GeoM.Translate(467, 427)
+		}
+		screen.DrawImage(hlDiscard, opts)
+	}
+
 	s.hand.Draw(screen)
 	s.discardButton.Draw(screen)
 	s.playButton.Draw(screen)
@@ -47,7 +62,7 @@ func (s *buildingPhase) Draw(screen *ebiten.Image) {
 	components.NewDeckPieces(s.State.PlankPartsBuilt, s.State.BoardPartsBuilt).Draw(screen)
 	components.NewExpertiseIndicators(s.State).Draw(screen)
 	if len(s.State.ActiveHelpers) > len(s.figures){
-		s.figures = append(s.figures, components.NewFigure(s.State.ActiveHelpers[len(s.State.ActiveHelpers)-1].Card.CardID.RawName(), 396 + (len(s.figures) * 20 ), 110, 1.2))
+		s.figures = append(s.figures, components.NewFigure(s.State.ActiveHelpers[len(s.State.ActiveHelpers)-1].Card.CardID.RawName(), 396 + (len(s.figures) * 40 ), 110, 1.2))
 	}
 	for _, f := range s.figures {
 		f.Draw(screen)

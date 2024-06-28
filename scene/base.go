@@ -58,6 +58,15 @@ func (b *BaseScene) AdjustAlertPosition(left, top int) {
 
 func (b *BaseScene) DrawScene(screen *ebiten.Image) {
 	screen.DrawImage(b.Background, b.Opts)
+	if b.State.Controls.KeyEscape || b.State.Controls.KeyM {
+		bgm := assets.Registry.Sound("background")
+		if bgm.Volume() > 0 {
+			bgm.SetVolume(0)
+		} else {
+			bgm.SetVolume(0.3)
+		}
+
+	}
 	if b.State.ShowAlert {
 		log.Printf("Showing alert: %s", b.State.AlertText)
 		b.Alert.SetText(b.State.AlertText)

@@ -46,7 +46,7 @@ func (mm *mainMenu) Load(s *State, controller stagehand.SceneController[*State])
 	mm.exitButton = components.NewButton("Impossible", 320, 272, &s.Controls, func() {
 		mm.State = state.InitialState()
 		mm.State.MaxDays = 3
-		mm.State.MoneyLeft = 500
+		mm.State.MoneyLeft = 1000
 		mm.State.Deck = state.InitialDeck(2)
 		mm.BaseScene.SceneManager.SwitchWithTransition(SceneMap[ChooseStore], stagehand.NewDurationTimedFadeTransition[*State](time.Millisecond * 100))
 	})

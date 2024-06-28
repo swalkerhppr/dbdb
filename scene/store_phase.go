@@ -4,6 +4,7 @@ import (
 	"dbdb/components"
 	"dbdb/state"
 	"fmt"
+	"image/color"
 	"log"
 	"math/rand"
 	"time"
@@ -36,6 +37,7 @@ func (s *storePhase) Draw(screen *ebiten.Image) {
 	} else {
 		s.discardButton.SetText("New Hand")
 	}
+
 	s.DrawScene(screen)
 	encounterCounter := fmt.Sprintf("Encounter %d/%d\n", s.State.EncounterNumber+1, len(s.State.ChosenStore.Encounters))
 	switch s.State.CurrentEncounter {
@@ -66,6 +68,18 @@ func (s *storePhase) Draw(screen *ebiten.Image) {
 		components.NewIndicator("nail-icon-grey", " OR", 328, 96).Draw(screen)
 		components.NewIndicator("screw-icon-grey", "", 385, 96).Draw(screen)
 
+	}
+
+	if s.State.Controls.Inactive && s.State.NoPlay && time.Now().Second() % 2 == 0{
+		hlDiscard := ebiten.NewImage(130, 35)
+		hlDiscard.Fill(color.RGBA{200, 205, 0, 200})
+		opts := &ebiten.DrawImageOptions{}
+		if s.State.TimeLeft > 2 {
+			opts.GeoM.Translate(170, 427)
+		} else {
+			opts.GeoM.Translate(467, 427)
+		}
+		screen.DrawImage(hlDiscard, opts)
 	}
 	s.hand.Draw(screen)
 	s.discardButton.Draw(screen)
