@@ -79,12 +79,14 @@ func (s *GlobalState) SetHint() {
 		c.Hint = false
 	}
 	if s.Phase == StorePhase {
+		s.NoPlay = true
 		for _, c := range s.GetHand() {
 			if ( s.CurrentEncounter == EmployeeEncounter && (c.CardID.IsTool() || c.CardID.IsExpertise()) ) || 
 			   ( s.CurrentEncounter == NeighborEncounter && (c.CardID.IsTool() || c.CardID.IsHelper()) )    || 
 			   ( s.CurrentEncounter == HoleEncounter && (c.CardID == MaterialBoard || c.CardID == MaterialPlank ) ) || 
 			   ( s.CurrentEncounter == ShelfEncounter && (c.CardID == MaterialNail || c.CardID == MaterialScrew ) ) {
 						c.Hint = true
+						s.NoPlay = false
 						break
 			}
 		}

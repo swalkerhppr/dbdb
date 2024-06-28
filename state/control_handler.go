@@ -22,6 +22,8 @@ type ControlHandler struct {
 	KeySpace   bool
 	KeyTab     bool
 	KeyEnter   bool
+	KeyEscape  bool
+	KeyM       bool
 
 	Any        bool
 	Inactive   bool
@@ -42,6 +44,8 @@ func (c *ControlHandler) Update() error {
 	c.KeyEnter = inpututil.IsKeyJustReleased(ebiten.KeyEnter)
 	c.KeyTab   = inpututil.IsKeyJustReleased(ebiten.KeyTab)
 	c.KeySpace = inpututil.IsKeyJustReleased(ebiten.KeySpace)
+	c.KeyEscape = inpututil.IsKeyJustReleased(ebiten.KeyEscape)
+	c.KeyM = inpututil.IsKeyJustReleased(ebiten.KeyM)
 
 	c.Any = c.Key1 || c.Key2 || c.Key3 || c.Key4 || c.Key5 || c.KeySpace || c.KeyTab || c.KeyEnter || c.LeftClick || c.RightClick
 	if c.Any {
