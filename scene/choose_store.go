@@ -32,6 +32,15 @@ func (s *chooseStore) Draw(screen *ebiten.Image) {
 	s.choice2.Draw(screen)
 	s.choice3.Draw(screen)
 	s.textBox.Draw(screen)
+
+	switch {
+	case s.State.Controls.Key1:
+		s.choice1.OnClick()
+	case s.State.Controls.Key2:
+		s.choice2.OnClick()
+	case s.State.Controls.Key3:
+		s.choice3.OnClick()
+	}
 }
 
 func (cs *chooseStore) Load(s *State, controller stagehand.SceneController[*State]) {

@@ -27,6 +27,12 @@ func CreateBuildingPhase(width, height int) stagehand.Scene[*State] {
 }
 
 func (s *buildingPhase) Draw(screen *ebiten.Image) {
+	if s.State.CardsLeftInDeck() < 5 {
+		s.discardButton.SetText("New Hand (-2)")
+	} else {
+		s.discardButton.SetText("New Hand")
+	}
+
 	s.DrawScene(screen)
 	s.hand.Draw(screen)
 	s.discardButton.Draw(screen)
@@ -45,6 +51,15 @@ func (s *buildingPhase) Draw(screen *ebiten.Image) {
 	}
 	for _, f := range s.figures {
 		f.Draw(screen)
+	}
+	if s.State.Controls.KeyEnter {
+		s.endDayButton.OnClick()
+	}
+	if s.State.Controls.KeyTab {
+		s.discardButton.OnClick()
+	}
+	if s.State.Controls.KeySpace {
+		s.playButton.OnClick()
 	}
 }
 

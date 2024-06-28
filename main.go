@@ -31,6 +31,8 @@ func main() {
 
 	sm := stagehand.NewSceneManager[*scene.State](scene.SceneMap[startAt], globalState)
 
+	assets.Registry.Sound("background").Play()
+
 	if err := ebiten.RunGame(sm); err != nil {
 		log.Fatal(err)
 	}

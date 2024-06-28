@@ -38,4 +38,8 @@ func (gr *dayResults) Draw(screen *ebiten.Image) {
 	components.NewDeckIndicators(gr.State, 8, 164, 163).Draw(screen)
 	components.NewTextBox(gr.scoreText, 18, 191, 240, 256, 128).Draw(screen)
 	gr.continueButton.Draw(screen)
+
+	if gr.State.Controls.KeyTab || gr.State.Controls.KeySpace || gr.State.Controls.KeyTab {
+		gr.continueButton.OnClick()
+	}
 }

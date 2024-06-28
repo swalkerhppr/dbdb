@@ -178,11 +178,13 @@ func (s *GlobalState) playBuildCard() bool {
 	}
 
 	result := card1.Combine(allSelected[1:]...)
+	var disable CardID
+
 
 	if s.IsExpertiseActive(ExpertiseWoodsman) {
 		// All combinations involve wood
 		totalTime--
-		s.DisableExpertise(ExpertiseWoodsman)
+		disable |= ExpertiseWoodsman
 	}
 
 	if s.IsExpertiseActive(ExpertiseTradesman) &&
@@ -190,27 +192,28 @@ func (s *GlobalState) playBuildCard() bool {
 		  (CardID(result) & MaterialScrew != 0) ) {
 		// saw/glue don't use nail or screw
 		totalTime--
-		s.DisableExpertise(ExpertiseTradesman)
+		disable |= ExpertiseTradesman
 	}
 
 	if s.IsExpertiseActive(ExpertiseRoofer) &&
 		( (CardID(result) & ToolHammer != 0) ||
 		  (CardID(result) & ToolNailGun != 0) ){
 		totalTime--
-		s.DisableExpertise(ExpertiseRoofer)
+		disable |= ExpertiseRoofer
 	}
 
 	if s.IsExpertiseActive(ExpertiseLumberjack) &&
 		( (CardID(result) & ToolSaw != 0) ||
 			(CardID(result) & ToolCircularSaw != 0) ) {
 		totalTime--
-		s.DisableExpertise(ExpertiseRoofer)
+		disable |= ExpertiseLumberjack
 	}
 
 	if totalTime > s.TimeLeft {
 		s.alert("You don't have enough time!")
 		return false
 	}
+
 
 	switch result {
 	case PlankNailHammer, PlankNailNailGun, PlankScrewDrill:
@@ -279,23 +282,30 @@ func (s *GlobalState) playBuildCard() bool {
 	for _, c := range allSelected {
 		switch c.CardID.CardType() {
 		case MaterialType:
-			s.ReleaseCard(c)
-			s.DestroyCard(c)
+			// releases to the ether (doesn't put back in deck)
+			if !s.ReleaseCard(c) {
+				s.DestroyCard(c)
+			}
 		case ToolType:
 			c.UsesLeft--
 			if s.IsExpertiseActive(ExpertiseBlacksmith) {
 				c.UsesLeft++
-				s.DisableExpertise(ExpertiseBlacksmith)
+				disable |= ExpertiseBlacksmith
 			}
-			s.ReleaseCard(c)
-			s.DiscardCard(c)
+			if !s.ReleaseCard(c) {
+				s.DiscardCard(c)
+			}
 		}
 	}
 
 	s.TimeLeft -= totalTime
 	if s.IsExpertiseActive(ExpertiseOptimizer) {
 		s.TimeLeft += totalTime
-		s.DisableExpertise(ExpertiseOptimizer)
+		disable |= ExpertiseOptimizer
+	}
+
+	if disable != 0 {
+		s.DisableExpertise(disable)
 	}
 
 	if s.RequiredBoardParts == s.BoardPartsBuilt && s.RequiredPlankParts == s.PlankPartsBuilt {

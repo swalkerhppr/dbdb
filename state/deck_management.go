@@ -30,6 +30,8 @@ func (s *GlobalState) SellCardWithID(cid CardID) {
 		price = 10
 	}
 
+	price *= 1 + int(s.ChosenStore.StoreQuality)
+
 	for _, c := range s.Deck {
 		if c.CardID & cid != 0 {
 			log.Printf("Sold %+v", c)
@@ -71,11 +73,59 @@ func (s *GlobalState) BuyCard(card *CardState, cost float32, stock int) int {
 	return stock-1
 }
 
+func (s *GlobalState) SetHint() {
+	s.ShowHint = false
+	for _, c := range s.Deck {
+		c.Hint = false
+	}
+	if s.Phase == StorePhase {
+		for _, c := range s.GetHand() {
+			if ( s.CurrentEncounter == EmployeeEncounter && (c.CardID.IsTool() || c.CardID.IsExpertise()) ) || 
+			   ( s.CurrentEncounter == NeighborEncounter && (c.CardID.IsTool() || c.CardID.IsHelper()) )    || 
+			   ( s.CurrentEncounter == HoleEncounter && (c.CardID == MaterialBoard || c.CardID == MaterialPlank ) ) || 
+			   ( s.CurrentEncounter == ShelfEncounter && (c.CardID == MaterialNail || c.CardID == MaterialScrew ) ) {
+						c.Hint = true
+						break
+			}
+		}
+	}
+	if s.Phase == BuildPhase {
+		var result CombineResult = 0
+		var find CombineResult
+		hand := s.GetHand()
+		for _, c := range hand {
+			result |= CombineResult(c.CardID)
+		}
+		for _, match := range []CombineResult{ PlankNailHammer, PlankNailNailGun, PlankScrewDrill, BoardNailHammer, BoardNailNailGun, BoardScrewDrill, BoardSaw, BoardCircularSaw, PlankGlue } {
+			if match & result == match {
+				find = match
+				break
+			}
+		}
+
+		if find != 0 {
+			s.NoPlay = false
+			for _, c := range hand {
+				if CombineResult(c.CardID) & find != 0 {
+					c.Hint = true
+					find ^= CombineResult(c.CardID)
+				}
+				if find == 0 {
+					break
+				}
+			}
+		} else {
+			s.NoPlay = true
+		}
+	}
+}
+
 // Selects a card if it is not selected, deselects if it is not
 // keeps track of all selected cards internally
 func (s *GlobalState) ToggleSelectCard(handIdx int) {
 	card := s.Deck[s.handStartIdx + handIdx]
 	card.Selected = !card.Selected
+	card.Hint = false
 	if card.Selected {
 		s.selectedCards = append(s.selectedCards, card)
 	} else {
@@ -115,6 +165,9 @@ func (s *GlobalState) UpdateSelectedCardsPlayable()  {
 
 // Clears the list of selected cards. Updates cards internal state to not be seleted
 func (s *GlobalState) ClearSelectedCards() {
+	for _, c := range s.GetHand() {
+		c.Hint = false
+	}
 	for i := range s.selectedCards {
 		s.selectedCards[i].Selected = false
 	}
@@ -164,16 +217,19 @@ func (s *GlobalState) DiscardHand() bool {
 
 // Adds a card to the deck
 func (s *GlobalState) AddCard(card *CardState) {
-	s.Deck = append(s.Deck, card)
+	s.Deck = slices.Insert(s.Deck, 0, card)
+	s.handStartIdx++
+	s.topCardIdx++
 }
 
 // Removes a card from the deck. does not remove the card if it doesn't exist
 func (s *GlobalState) DestroyCard(card *CardState) {
-	log.Printf("Destroying: %+v", card)
+	log.Printf("Destroying: %+v from %+v", card, s.Deck)
 	for i, c := range s.Deck {
 		if c == card {
-			if s.topCardIdx >= len(s.Deck) {
-				s.topCardIdx = len(s.Deck) - 2
+			s.topCardIdx--
+			if s.topCardIdx <= s.handStartIdx {
+				s.topCardIdx = s.handStartIdx
 			}
 			s.Deck = slices.Delete(s.Deck, i, i+1)
 			return
@@ -202,15 +258,10 @@ func (s *GlobalState) DiscardCard(card *CardState) bool {
 func (s *GlobalState) DrawCard() bool {
 	// Draw a card
 	s.handStartIdx++
-	//s.topCardIdx++
 	if s.handStartIdx == s.topCardIdx {
 		return s.DiscardHand()
 	} 
 	assets.Registry.Sound("singlecard.ogg").Play()
-	//if s.topCardIdx > len(s.Deck) {
-	//	s.ShuffleCards(4, 4)
-	//	return true
-	//}
 	return false
 }
 

@@ -40,6 +40,7 @@ type CardState struct {
 	Quality MaterialOrToolQuality
 	FavoriteTool CardID
 	Selected bool
+	Hint     bool
 }
 
 func (c *CardState) IsPlayableAlone() bool {

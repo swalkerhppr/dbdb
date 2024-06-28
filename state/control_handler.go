@@ -1,6 +1,9 @@
 package state
 
 import (
+	"log"
+	"time"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
@@ -21,6 +24,8 @@ type ControlHandler struct {
 	KeyEnter   bool
 
 	Any        bool
+	Inactive   bool
+	LastAction time.Time
 }
 
 func (c *ControlHandler) Update() error {
@@ -39,5 +44,12 @@ func (c *ControlHandler) Update() error {
 	c.KeySpace = inpututil.IsKeyJustReleased(ebiten.KeySpace)
 
 	c.Any = c.Key1 || c.Key2 || c.Key3 || c.Key4 || c.Key5 || c.KeySpace || c.KeyTab || c.KeyEnter || c.LeftClick || c.RightClick
+	if c.Any {
+		c.LastAction = time.Now()
+		c.Inactive = false
+	} else if !c.Inactive && time.Now().Sub(c.LastAction) >= time.Second * 15 {
+		log.Println("Inactivity timeout")
+		c.Inactive = true
+	}
 	return nil
 }

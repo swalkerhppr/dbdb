@@ -35,6 +35,7 @@ func InitRegistry() {
 	log.Printf("Loaded Fonts: %+v", Registry.fontLib)
 
 	Registry.loadSounds(metaMap.AudioFiles, assetFS)
+	Registry.loadBGMusic()
 }
 
 var Registry *registry
@@ -115,6 +116,28 @@ func (r *registry) loadImages(fileinfos []FileInfo, fs embed.FS) {
 			log.Printf("Registered Sprite %s.", meta.Name)
 		}
 	}
+}
+
+func (r *registry) loadBGMusic() {
+	f, err := bgMusic.Open("DBDBBGBG.ogg")
+	if err != nil {
+		log.Println("Could not read bg sound file")
+		return
+	}
+
+	stream, err := vorbis.DecodeWithoutResampling(f)
+	if err != nil {
+		log.Println("Could not decode bg sound file")
+		return
+	}
+	loop := audio.NewInfiniteLoop(stream, stream.Length())
+	player, err := r.audioCtx.NewPlayer(loop)
+	if err != nil {
+		log.Println("Could not create loop for bg sound file")
+		return
+	}
+	player.SetVolume(.3)
+	r.soundMap["background"] = player
 }
 
 func (r *registry) loadSounds(fileinfos []FileInfo, fs embed.FS) {

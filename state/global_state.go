@@ -21,6 +21,8 @@ type GlobalState struct {
 	MaxDays   int
 	TimeLeft  int
 	GameWon   bool
+	ShowHint  bool
+	NoPlay    bool
 	
 	ChosenStore StoreData
 

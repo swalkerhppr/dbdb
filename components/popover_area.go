@@ -17,7 +17,7 @@ func NewPopoverArea(left, top, width, height int, img Drawer, c *state.ControlHa
 		width: width,
 		height: height,
 		popImage: img,
-		onClick: click,
+		OnClick: click,
 		ControlHandler: c,
 	}
 }
@@ -30,7 +30,7 @@ type PopoverArea struct {
 
 	popImage Drawer
 
-	onClick func()
+	OnClick func()
 
 	showImg bool
 	*state.ControlHandler
@@ -41,8 +41,8 @@ func (p *PopoverArea) Draw(screen *ebiten.Image) {
 		if !p.showImg {
 			p.showImg = true
 		}
-		if p.LeftClick && p.onClick != nil {
-			p.onClick()
+		if p.LeftClick && p.OnClick != nil {
+			p.OnClick()
 		}
 	} else if p.showImg {
 		p.showImg = false

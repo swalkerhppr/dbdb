@@ -71,6 +71,10 @@ func (b *BaseScene) DrawIndicators(screen *ebiten.Image) {
 	components.NewIndicator("time-symbol", fmt.Sprintf("x%d", b.State.TimeLeft), 400, 435).Draw(screen)
 	components.NewIndicator("money-symbol", fmt.Sprintf("%d", int(b.State.MoneyLeft)), 10, 5).Draw(screen)
 	components.NewIndicator("card-symbol", fmt.Sprintf(" %d/%d", b.State.CardsLeftInDeck(), len(b.State.Deck)), 315, 435).Draw(screen)
+
+	if b.State.Controls.Inactive {
+		b.State.ShowHint = true
+	} 
 }
 
 // Draw implements stagehand.Scene

@@ -59,12 +59,19 @@ func (c *CardSlots) Draw(screen *ebiten.Image) {
 			if !slot.CardID.IsEmptyCardSlot() {
 				NewCard(slot, c.left + ( (i + 1) * 32), c.top - 96).Draw(screen)
 
-			} else if c.globalState.CanSlot(slot){
+			} else {
 				if c.RightClick {
-					// place the selected card in the slot
-					c.globalState.HoldCard(slot)
-				}
-			} 
+					if c.globalState.CanSlot(slot){
+						// place the selected card in the slot
+						c.globalState.HoldCard(slot)
+					} else {
+						c.globalState.AlertText = "Can't put that there"
+						c.globalState.ShowAlert = true
+					}
+				} else {
+					NewTextBox("RClick: Hold", 16, c.left + ( (i + 1) * 32), c.top - 16, 128, 50).Draw(screen)
+				} 
+			}
 		}
 	}
 }

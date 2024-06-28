@@ -31,6 +31,11 @@ func CreateStorePhase(width, height int) stagehand.Scene[*State] {
 }
 
 func (s *storePhase) Draw(screen *ebiten.Image) {
+	if s.State.CardsLeftInDeck() < 5 {
+		s.discardButton.SetText("New Hand (-2)")
+	} else {
+		s.discardButton.SetText("New Hand")
+	}
 	s.DrawScene(screen)
 	encounterCounter := fmt.Sprintf("Encounter %d/%d\n", s.State.EncounterNumber+1, len(s.State.ChosenStore.Encounters))
 	switch s.State.CurrentEncounter {
@@ -81,11 +86,11 @@ func (s *storePhase) Draw(screen *ebiten.Image) {
 }
 
 func (s *storePhase) nextEncounter() {
-	s.State.EncounterNumber++
-	if s.State.EncounterNumber == len(s.State.ChosenStore.Encounters) {
+	if s.State.EncounterNumber == len(s.State.ChosenStore.Encounters) - 1 {
 		s.SceneManager.SwitchWithTransition(SceneMap[StoreShop], stagehand.NewDurationTimedFadeTransition[*State](time.Millisecond * 100))
 
 	} else {
+		s.State.EncounterNumber++
 		s.State.CurrentEncounter = s.State.ChosenStore.Encounters[s.State.EncounterNumber]
 		s.encounterNPC = components.NewRandomFigure(100, 100, 1.2)
 		if s.State.CurrentEncounter == state.EmployeeEncounter {

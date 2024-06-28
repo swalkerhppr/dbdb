@@ -12,6 +12,10 @@ type HelperState struct {
 }
 
 func (s *GlobalState) DeployHelper(c *CardState) bool {
+	if len(s.ActiveHelpers) == 3 {
+		s.alert("Can't hire more helpers today!")
+		return false
+	}
 	if s.IsExpertiseActive(ExpertiseGrifter) {
 		s.MoneyLeft += c.MoneyCost
 		s.DisableExpertise(ExpertiseGrifter)
@@ -57,19 +61,22 @@ func (s *GlobalState) HoldCard(c *CardState) {
 	log.Println("Could not find card to hold")
 }
 
-func (s *GlobalState) ReleaseCard(c *CardState) {
-	log.Printf("Releasing %+v", c)
+// The only time we release is when a combo happens, so we don't need to add materials back
+func (s *GlobalState) ReleaseCard(c *CardState) bool {
 	for i, held := range s.HeldCards {
 		if held == c {
 			s.HeldCards[i].Selected = false
-			s.AddCard(s.HeldCards[i])
-			if held.CardID.IsMaterial() {
-				s.HeldCards[i] = &CardState{ CardID: MaterialType | EmptyCardSlot }
-			} else {
+			if s.HeldCards[i].CardID.IsTool() {
+				log.Printf("Putting held card back in deck: %v", s.HeldCards[i])
+				s.AddCard(s.HeldCards[i])
 				s.HeldCards[i] = &CardState{ CardID: held.CardID | EmptyCardSlot }
 			}
-			return
+			if held.CardID.IsMaterial() {
+				log.Printf("Erasing material: %v", held)
+				s.HeldCards[i] = &CardState{ CardID: MaterialType | EmptyCardSlot }
+			} 
+			return true
 		}
 	}
-	log.Println("Could not find card to release")
+	return false
 }

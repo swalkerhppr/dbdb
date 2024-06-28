@@ -168,4 +168,41 @@ func (ss *storeShop) Draw(screen *ebiten.Image) {
 			}
 		}
 	}
+
+	switch {
+	case ss.State.Controls.Key1:
+		ss.State.ChosenStore.PlankStock = ss.State.BuyCard(ss.plankCard, ss.State.ChosenStore.PlankPrice, ss.State.ChosenStore.PlankStock)
+
+	case ss.State.Controls.Key2:
+		ss.State.ChosenStore.BoardStock = ss.State.BuyCard(ss.boardCard, ss.State.ChosenStore.BoardPrice, ss.State.ChosenStore.BoardStock)
+
+	case ss.State.Controls.Key3:
+		ss.State.ChosenStore.NailStock = ss.State.BuyCard(ss.nailCard, ss.State.ChosenStore.NailPrice, ss.State.ChosenStore.NailStock)
+
+	case ss.State.Controls.Key4:
+		ss.State.ChosenStore.ScrewStock = ss.State.BuyCard(ss.screwCard, ss.State.ChosenStore.ScrewPrice, ss.State.ChosenStore.ScrewStock)
+
+	case ss.State.Controls.Key5:
+		if tool != nil {
+			switch tool.Quality {
+			case state.OneStar:
+				if ss.State.BuyCard(tool, 100, 1) == 0 {
+					ss.toolBought++
+				}
+			case state.TwoStar:
+				if ss.State.BuyCard(tool, 100, 1) == 0 {
+					ss.toolBought++
+				}
+			case state.ThreeStar:
+				if ss.State.BuyCard(tool, 200, 1) == 0 {
+					ss.toolBought++
+				}
+			}
+		}
+
+	case ss.State.Controls.KeyTab, ss.State.Controls.KeySpace:
+		ss.continueButton.OnClick()
+	case ss.State.Controls.KeyEnter:
+		ss.repairButton.OnClick()
+	}
 }

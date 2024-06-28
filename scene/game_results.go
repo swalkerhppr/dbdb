@@ -52,6 +52,13 @@ func (gr *gameResults) Draw(screen *ebiten.Image) {
 	components.NewTextBox(gr.scoreText, 16, 191, 240, 256, 96).Draw(screen)
 	components.NewTextBox(fmt.Sprintf("Final Score: %d", gr.score), 23, 207, 338, 224, 40).Draw(screen)
 	gr.mainMenuButton.Draw(screen)
+
+	if gr.State.Controls.KeySpace {
+		gr.mainMenuButton.OnClick()
+	}
+	if gr.State.Controls.KeyTab || gr.State.Controls.KeyEnter {
+		takeScreenshot(fmt.Sprintf("dbdb_score_%d.png", gr.score), screen)
+	}
 }
 
 func createScoreText(s *State) string {

@@ -3,6 +3,7 @@ package components
 import (
 	"dbdb/state"
 	"image/color"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -10,6 +11,7 @@ import (
 var (
 	trashCombo    color.Color = color.RGBA{255, 127, 50, 200}
 	playableCombo color.Color = color.RGBA{127, 255, 50, 200}
+	hintColor     color.Color = color.RGBA{200, 205, 0, 200}
 )
 
 
@@ -48,9 +50,17 @@ func (h *CardHand) Draw(screen *ebiten.Image) {
 		selectColor = playableCombo
 	}
 
+	if h.state.ShowHint {
+		h.state.SetHint()
+	}
+
 	for _, card := range cards {
 		if card.cardState.Selected {
 			card.highlight = selectColor
+		} else if card.cardState.Hint {
+			if int(time.Now().Second()) % 3 == 0 {
+				card.highlight = hintColor
+			}
 		} else {
 			card.highlight = nil
 		}
