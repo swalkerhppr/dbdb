@@ -156,7 +156,7 @@ func RandomExpertiseID() CardID {
 		ExpertiseDuplicator,
 		ExpertiseWoodsman,
 		ExpertiseOptimizer,
-	}[rand.Intn(4)]
+	}[rand.Intn(8)]
 }
 
 func RandomToolOrMaterialCardID() CardID {
